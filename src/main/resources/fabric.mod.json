@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "soulstone",
+  "version": "${version}",
+  "name": "SoulStone",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "GPL-3.0",
+  "icon": "assets/soulstone/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "org.LiangMi.soulstone.client.SoulstoneDataGenerator"
+    ],
+    "client": [
+      "org.LiangMi.soulstone.client.SoulstoneClient"
+    ],
+    "main": [
+      "org.LiangMi.soulstone.Soulstone"
+    ]
+  },
+  "mixins": [
+    "soulstone.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
