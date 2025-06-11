@@ -59,7 +59,6 @@
     }
   ],
   "cost": {
-    "exhaust" : 0.2,
-    "mana": 50
+    "exhaust" : 0.2
   }
 }

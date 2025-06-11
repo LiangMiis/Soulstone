@@ -31,7 +31,6 @@
   },
   "cost": {
     "consume_item": false,
-    "cooldown_duration": 10,
-    "mana": 50
+    "cooldown_duration": 10
   }
 }

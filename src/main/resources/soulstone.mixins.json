@@ -6,7 +6,9 @@
   "mixins": [
     "LivingEntityMixin",
     "SpellBooksMixin",
-    "SpellcostMixin"
+    "SpellCastMixin",
+    "SpellcostMixin",
+    "SpellRegistryMixin"
   ],
   "client": [
     "GuiMixin"
