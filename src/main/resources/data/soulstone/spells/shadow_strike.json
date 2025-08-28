@@ -1,0 +1,48 @@
+{
+  "school": "ARCANE",
+  "learn": {
+    "tier": 3
+  },
+  "cast":{
+    "duration": 1,
+    "animation": "spell_engine:one_handed_healing_charge"
+  },
+  "release": {
+    "target":{
+      "type": "CURSOR",
+      "cursor": {
+        "use_caster_as_fallback": false
+      }
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "TELEPORT",
+        "teleport": {
+          "mode": "BEHIND_TARGET",
+          "intent": "HARMFUL",
+          "behind_target": {
+            "distance": 1.5
+          }
+        }
+      }
+    },
+    {
+      "action": {
+        "apply_to_caster": true,
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:darkness",
+          "duration": 10,
+          "amplifier": 255,
+          "apply_mode": "SET",
+          "show_particles": false
+        }
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 2
+  }
+}

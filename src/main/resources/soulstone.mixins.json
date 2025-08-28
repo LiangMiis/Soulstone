@@ -4,14 +4,19 @@
   "package": "org.LiangMi.soulstone.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "LivingEntityMixin",
+    "LivingEntityBulwarkMixin",
+    "LivingEntityTemporalShellMixin",
+    "LivingEntityStealthMixin",
+    "ManaPlayerEntityMixin",
+    "SpellBindingMixin",
     "SpellBooksMixin",
-    "SpellCastMixin",
     "SpellcostMixin",
+    "SpellHelperMixin",
     "SpellRegistryMixin"
   ],
   "client": [
-    "GuiMixin"
+    "client.GuiMixin",
+    "client.LivingEntityRenderStealthMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,0 +1,65 @@
+{
+  "school": "HEALING",
+  "learn": {
+    "tier": 4
+  },
+  "cast":{
+    "duration": 1,
+    "animation": "spell_engine:one_handed_healing_charge"
+  },
+  "release": {
+    "target":{
+      "type": "AREA",
+      "area": {
+        "horizontal_range_multiplier": 12,
+        "vertical_range_multiplier": 4,
+        "include_caster": true
+      }
+    }
+
+  },
+  "impact": [
+    {
+      "action": {
+        "apply_to_caster": true,
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:resistance",
+          "amplifier": 1,
+          "duration": 10,
+          "apply_mode": "SET",
+          "show_particles": false
+        }
+      }
+    },
+    {
+      "action": {
+        "apply_to_caster": true,
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:speed",
+          "amplifier": 1,
+          "duration": 10,
+          "apply_mode": "SET",
+          "show_particles": false
+        }
+      }
+    },
+    {
+      "action": {
+        "apply_to_caster": true,
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:absorption",
+          "amplifier": 1,
+          "duration": 10,
+          "apply_mode": "SET",
+          "show_particles": false
+        }
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 2
+  }
+}

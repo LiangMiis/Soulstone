@@ -1,0 +1,35 @@
+{
+  "school": "HEALING",
+  "group": "primary",
+  "learn": {
+    "tier": 1
+  },
+  "cast":{
+    "duration": 1,
+    "animation": "spell_engine:one_handed_healing_charge"
+  },
+  "release": {
+    "target":{
+      "type": "SELF"
+    }
+
+  },
+  "impact": [
+    {
+      "action": {
+        "apply_to_caster": true,
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "soulstone:bulwark",
+          "amplifier": 1,
+          "duration": 10,
+          "apply_mode": "SET",
+          "show_particles": false
+        }
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 2
+  }
+}

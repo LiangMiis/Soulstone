@@ -1,0 +1,6 @@
+{
+  "parent": "soulstone:item/base/staff_24",
+  "textures": {
+    "layer0": "soulstone:item/greater_abyssal_cruciform_staff"
+  }
+}

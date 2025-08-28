@@ -1,0 +1,34 @@
+{
+  "school": "HEALING",
+  "learn": {
+    "tier": 2
+  },
+  "cast":{
+    "duration": 1,
+    "animation": "spell_engine:one_handed_healing_charge"
+  },
+  "release": {
+    "target":{
+      "type": "SELF"
+    }
+
+  },
+  "impact": [
+    {
+      "action": {
+        "apply_to_caster": true,
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:regeneration",
+          "amplifier": 1,
+          "duration": 10,
+          "apply_mode": "SET",
+          "show_particles": false
+        }
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 2
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "soulstone:item/median_abyssal_orb"
+  }
+}

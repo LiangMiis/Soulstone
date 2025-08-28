@@ -8,19 +8,19 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(Spell.Cost.class)
 public class SpellcostMixin implements SpellcostMixinInterface {
     @Unique
-    float rpgmana = -1;
+    float Mana = -1;
 
     public void setManaCost(float cost) {
-        rpgmana = cost;
+        Mana = cost;
     }
 
     @Override
     public float getManaCost() {
-        return rpgmana == -1 ? 0 : rpgmana;
+        return Mana == -1 ? 0 : Mana;
     }
 
     @Override
     public boolean calculateManaCost() {
-        return rpgmana == -1;
+        return Mana == -1;
     }
 }

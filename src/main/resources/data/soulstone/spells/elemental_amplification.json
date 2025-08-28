@@ -1,0 +1,33 @@
+{
+  "school": "ARCANE",
+  "learn": {
+    "tier": 2
+  },
+  "cast":{
+    "duration": 1,
+    "animation": "spell_engine:one_handed_healing_charge"
+  },
+  "release": {
+    "target":{
+      "type": "SELF"
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "apply_to_caster": true,
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:strength",
+          "amplifier": 2,
+          "duration": 10,
+          "apply_mode": "SET",
+          "show_particles": false
+        }
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 2
+  }
+}

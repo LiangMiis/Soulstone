@@ -1,0 +1,45 @@
+{
+  "school": "HEALING",
+  "range": 10,
+  "learn": {
+    "tier": 3
+  },
+  "cast":{
+    "duration": 1,
+    "animation": "spell_engine:one_handed_healing_charge"
+  },
+  "release": {
+    "target":{
+      "type": "AREA",
+      "area": {
+        "vertical_range_multiplier": 0.5
+      }
+    }
+
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "minecraft:instant_damage",
+          "amplifier": 20,
+          "duration": 2,
+          "apply_mode": "ADD",
+          "show_particles": false
+        }
+      }
+    },
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "knockback": 3
+        }
+      }
+    }
+  ],
+  "cost": {
+    "cooldown_duration": 2
+  }
+}

@@ -64,6 +64,7 @@ dependencies {
 
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
@@ -76,6 +77,8 @@ dependencies {
     modImplementation("dev.emi:trinkets:${project.trinkets_version}")
     modImplementation("maven.modrinth:spell-engine:${project.spell_engine_version}-fabric")
     modImplementation("maven.modrinth:spell-power:${project.spell_power_version}-fabric")
+    implementation("com.eliotlash.mclib:mclib:20")
+    modImplementation("software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}")
     implementation("com.eliotlash.mclib:mclib:20")
     modImplementation("maven.modrinth:origins:${project.origins_version}-fabric")
     modApi "com.github.apace100:apoli:${project.apoli_version}"

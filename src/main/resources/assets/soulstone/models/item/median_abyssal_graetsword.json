@@ -1,0 +1,6 @@
+{
+  "parent": "soulstone:item/base/claymore_28",
+  "textures": {
+    "layer0": "soulstone:item/median_abyssal_graetsword"
+  }
+}

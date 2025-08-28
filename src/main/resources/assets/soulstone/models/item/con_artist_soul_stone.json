@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "soulstone:item/con_artist_soul_stone"
+  }
+}

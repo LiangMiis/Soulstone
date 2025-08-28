@@ -1,6 +1,8 @@
 {
   "spell_ids":[
-    "soulstone:greathealing",
-    "soulstone:stonelom"
+    "soulstone:bulwark",
+    "soulstone:rallying_cry",
+    "soulstone:unyielding_counter",
+    "soulstone:mystic_monolith"
   ]
 }

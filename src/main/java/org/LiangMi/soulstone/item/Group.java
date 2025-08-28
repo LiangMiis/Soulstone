@@ -15,7 +15,7 @@ public class Group {
     public static ItemGroup SOULSTONE;
     public static void registerGroup(){
         Group.SOULSTONE = FabricItemGroup.builder()
-                .icon(() -> new ItemStack(ModItems.SCYTHE))
+                .icon(() -> new ItemStack(ModItems.ICON))
                 .displayName(Text.translatable("itemGroup.soulstone.general"))
                 .build();
     }
