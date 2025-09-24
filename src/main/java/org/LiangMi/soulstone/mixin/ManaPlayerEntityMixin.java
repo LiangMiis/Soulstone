@@ -3,6 +3,7 @@ package org.LiangMi.soulstone.mixin;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -43,16 +44,16 @@ public class ManaPlayerEntityMixin implements ManaInterface {
     public double getMaxMana() {
         // 获取当前玩家实体实例
         PlayerEntity player = (PlayerEntity) (Object) this;
-        // 基础魔力值50 + 自定义属性MANA提供的加成
-        return 50 + player.getAttributeValue(ManaRegistry.MANA);
+        // 基础魔力值
+        return player.getAttributeValue(ManaRegistry.MANA);
     }
 
     // 计算每游戏刻的魔力恢复量
     public double getManaRegen() {
         // 获取当前玩家实体实例
-        PlayerEntity living = (PlayerEntity) (Object) this;
+        PlayerEntity player = (PlayerEntity) (Object) this;
         // 将每秒恢复值转换为每刻恢复值（1秒=20游戏刻）
-        return living.getAttributeValue(ManaRegistry.MANAREGEN) / 20;
+        return (double) player.getAttributeValue(ManaRegistry.MANAREGEN) / 20;
     }
 
     // 实现接口方法：获取当前所有魔力效果实例

@@ -21,6 +21,8 @@ import org.LiangMi.soulstone.item.Group;
 import org.LiangMi.soulstone.item.ModItems;
 import org.LiangMi.soulstone.item.StoneItem;
 import org.LiangMi.soulstone.item.Weapons;
+import org.LiangMi.soulstone.item.armor.Armors;
+import org.LiangMi.soulstone.item.armor.SoulArmor;
 import org.LiangMi.soulstone.network.ConfigSync;
 
 
@@ -47,10 +49,14 @@ public class Soulstone implements ModInitializer {
         });
 
         Weapons.register(itemConfig.value.weapons);
+        Armors.register(itemConfig.value.armor_sets);
         ModItems.initialize();
         StoneItem.register();
         Group.registerGroup();
-        Registry.register(Registries.ITEM_GROUP, Group.KEY, Group.SOULSTONE);
+        Registry.register(Registries.ITEM_GROUP, Group.MAIN, Group.SOULSTONE);
+        Registry.register(Registries.ITEM_GROUP, Group.TRINKET, Group.Trinket);
+        Registry.register(Registries.ITEM_GROUP, Group.WEAPON, Group.Weapon);
+        Registry.register(Registries.ITEM_GROUP, Group.ARMOR,Group.Armor);
         Effects.register();
     }
 

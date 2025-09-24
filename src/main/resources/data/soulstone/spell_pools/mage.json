@@ -1,8 +1,8 @@
 {
   "spell_ids": [
-    "soulstone:elemental_missile",
-    "soulstone:elemental_amplification",
-    "soulstone:elemental_beam",
-    "soulstone:elemental_galaxy"
+    "soulstone:mage/elemental_missile",
+    "soulstone:mage/elemental_amplification",
+    "soulstone:mage/elemental_beam",
+    "soulstone:mage/elemental_galaxy"
   ]
 }

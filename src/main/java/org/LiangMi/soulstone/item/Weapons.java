@@ -113,6 +113,6 @@ public class Weapons {
 
     public static void register(Map<String, ItemConfig.Weapon> configs) {
         // 注册所有武器条目
-        Weapon.register(configs, entries, Group.KEY);
+        Weapon.register(configs, entries, Group.WEAPON);
     }
 }

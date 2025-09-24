@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.LiangMi.soulstone.Soulstone;
-import org.LiangMi.soulstone.api.ManaInterface;
 import org.LiangMi.soulstone.other.BarHelper;
 
 public class FoodBar {
@@ -55,8 +54,7 @@ public class FoodBar {
 
     // 渲染魔力值文本的方法
     private void renderFoodValue(TextRenderer font, DrawContext context, int x, int y, PlayerEntity player, HungerManager FoodData) {
-        // 通过ManaInterface接口获取玩家的魔力值
-        ManaInterface manaInterface = (ManaInterface) player;
+
         y+= 1; // 微调Y坐标
 
         // 根据配置决定使用独立图标还是原版图标
@@ -71,11 +69,14 @@ public class FoodBar {
         float Food = Math.min(FoodData.getFoodLevel(), maxFood);
         String text;
 
+
         // 渲染魔力值文本（格式：当前值/最大值）
         text = BarHelper.KeepOneDecimal(Food) + "/" + BarHelper.KeepOneDecimal(maxFood);
         context.drawText(font,text,x+10,y-9,0xa87322,false); // 使用蓝色调表示魔力
 
-        float ARMORTOUGHNESS = (float) player.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS);
+        float maxAnchor = 100;
+
+        float ARMORTOUGHNESS = (float) player.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
                 context.drawTexture(armor_full,
                         x, y + 5,
                         0, 0,

@@ -17,7 +17,7 @@ public class ServerConfig implements ConfigData {
     @Comment("在这里添加法术法力值")
     public LinkedHashMap<String, Integer> spells = new LinkedHashMap<String, Integer>() {
         {
-            this.put("soulstone:stonelom", 40);
+            this.put("soulstone:bulwark", 40);
             this.put("soulstone:greathealing", 20);
         }
     };
