@@ -23,6 +23,8 @@ public class Effects {
     public static StatusEffect TEMPORALSHELL = new TemporalShellEffect(StatusEffectCategory.BENEFICIAL, 0xf6f6a3);
     public static StatusEffect CRIMSONMADNESS = new CrimsonMadnessEffect(StatusEffectCategory.BENEFICIAL, 0x5b0808);
     public static StatusEffect THORNS = new ThornsEffect(StatusEffectCategory.BENEFICIAL,0x000000);
+    public static StatusEffect ROCK = new RockEffect(StatusEffectCategory.BENEFICIAL,0x000000);
+    public static StatusEffect BREAKINGWIND = new BreakingWindEffect(StatusEffectCategory.BENEFICIAL,0x000000);
 
     /**
      * 注册所有状态效果并配置其属性
@@ -66,6 +68,24 @@ public class Effects {
                 1.0f,
                 EntityAttributeModifier.Operation.MULTIPLY_BASE);
 
+        ROCK.addAttributeModifier(EntityAttributes.GENERIC_ARMOR,
+                "5AA3C7E4-5966-4B38-B324-021FD20304EE",
+                20.0f,
+                EntityAttributeModifier.Operation.ADDITION);
+        ROCK.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                "5AA3C7E4-5966-4B38-B324-021FD20304EE",
+                -0.2f,
+                EntityAttributeModifier.Operation.MULTIPLY_BASE);
+
+        BREAKINGWIND.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                "5AA3C7E4-5966-4B38-B324-021FD20304EE",
+                0.2f,
+                EntityAttributeModifier.Operation.MULTIPLY_BASE);
+        BREAKINGWIND.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE,
+                "5AA3C7E4-5966-4B38-B324-021FD20304EE",
+                0.2f,
+                EntityAttributeModifier.Operation.MULTIPLY_BASE);
+
 
 
         // 配置时空壳效果的同步属性
@@ -76,6 +96,8 @@ public class Effects {
 
         Synchronized.configure(CRIMSONMADNESS,true);
         Synchronized.configure(THORNS,true);
+        Synchronized.configure(ROCK,true);
+        Synchronized.configure(BREAKINGWIND,true);
 
         // 注册所有状态效果到游戏注册表
         int rawId = config.effects_raw_id_start; // 从配置获取起始ID
@@ -84,6 +106,8 @@ public class Effects {
         Registry.register(Registries.STATUS_EFFECT, rawId++, new Identifier(Soulstone.ID, "temporal_shell").toString(), TEMPORALSHELL);
         Registry.register(Registries.STATUS_EFFECT, rawId++, new Identifier(Soulstone.ID, "crimson_madness").toString(), CRIMSONMADNESS);
         Registry.register(Registries.STATUS_EFFECT, rawId++, new Identifier(Soulstone.ID, "thorns").toString(), THORNS);
+        Registry.register(Registries.STATUS_EFFECT, rawId++, new Identifier(Soulstone.ID, "rock").toString(), ROCK);
+        Registry.register(Registries.STATUS_EFFECT, rawId++, new Identifier(Soulstone.ID, "breaking_wind").toString(), BREAKINGWIND);
 
     }
 }

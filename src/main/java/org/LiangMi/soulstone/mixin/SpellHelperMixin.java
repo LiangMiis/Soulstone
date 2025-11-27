@@ -12,6 +12,8 @@ import net.spell_engine.internals.casting.SpellCast;
 import org.LiangMi.soulstone.api.ManaInterface;
 import org.LiangMi.soulstone.api.SpellcostMixinInterface;
 import org.LiangMi.soulstone.client.hud.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,6 +25,8 @@ import java.util.List;
 // 使用Mixin技术将此类混入到SpellHelper类中
 @Mixin(SpellHelper.class)
 public class SpellHelperMixin {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpellHelperMixin.class);
     // 计算法术的魔力消耗
     private static float getManaCost(PlayerEntity player, Spell spell, SpellCast.Action action) {
         // 通过接口转换获取法术消耗值
@@ -44,6 +48,7 @@ public class SpellHelperMixin {
     private static void attempCasting(PlayerEntity player, ItemStack itemStack, Identifier spellId, CallbackInfoReturnable<SpellCast.Attempt> cir) {
         // 从注册表获取法术对象
         Spell spell = SpellRegistry.getSpell(spellId);
+
         // 创建消息对象（暂未使用）
         Messages messages = new Messages();
 

@@ -39,7 +39,7 @@ public class Group {
                 .build();
         // 构建饰品物品组
         Group.Trinket = FabricItemGroup.builder()
-                .icon(()-> new ItemStack(ModItems.TreasureHuntersBlade)) // 设置物品组图标
+                .icon(()-> new ItemStack(Trinkets.TreasureHuntersBlade)) // 设置物品组图标
                 .displayName(Text.translatable("itemGroup.soulstone.trinket")) // 设置显示名称
                 .build();
         Group.Weapon = FabricItemGroup.builder()

@@ -13,12 +13,12 @@ import org.lwjgl.glfw.GLFW;
 
 public class Keybindings {
 
-    public static KeyBinding OPEN_QUESTSCREEN_KEY;
+    public static KeyBinding OPEN_TRINKET_KEY;
     public static KeyBinding OPEN_ANCHOR_KEY;
     public static void initBindings() {
-        OPEN_QUESTSCREEN_KEY = KeyBindingHelper.registerKeyBinding(
+        OPEN_TRINKET_KEY = KeyBindingHelper.registerKeyBinding(
                 new KeyBinding(
-                        "keybindings."+Soulstone.ID+".questscreen",
+                        "keybindings."+Soulstone.ID+".trinket",
                         InputUtil.Type.KEYSYM,
                         GLFW.GLFW_KEY_G,
                         Soulstone.ModName()));
@@ -32,7 +32,7 @@ public class Keybindings {
 
     public static void register(){
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (OPEN_QUESTSCREEN_KEY.wasPressed()&&client.player != null) {
+            if (OPEN_TRINKET_KEY.wasPressed()&&client.player != null) {
                 client.setScreen(new QuestScreen());
             }
         });

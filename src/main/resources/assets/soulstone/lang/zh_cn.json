@@ -21,6 +21,24 @@
   "item.soulstone.greater_abyssal_graetsword": "高阶大剑",
   "item.soulstone.greater_abyssal_orb": "高阶魔力球",
 
+  "item.soulstone.treasure_hunter_s_blade": "探渊者的残刃",
+  "item.soulstone.champions_armlet": "荣耀者的臂章",
+  "item.soulstone.crimson_authority": "猩红权柄",
+  "item.soulstone.philosopher_s_stone": "贤者之石",
+  "item.soulstone.warrior_roar": "战士咆哮",
+  "item.soulstone.mountain_pendant": "磐石",
+  "item.soulstone.immortal_monitor": "不朽巨蜥",
+  "item.soulstone.health_ring": "生命增幅戒指",
+  "item.soulstone.mana_ring": "法力增幅戒指",
+  "item.soulstone.armor_ring": "盔甲增幅戒指",
+  "item.soulstone.luck_ring": "幸运增幅戒指",
+  "item.soulstone.speed_ring": "速度增幅戒指",
+  "item.soulstone.attack_speed_ring": "攻击速度增幅戒指",
+  "item.soulstone.armor_toughness_ring": "护甲韧性增幅戒指",
+  "item.soulstone.attack_knock_back_ring": "攻击击退增幅戒指",
+  "item.soulstone.flying_speed_ring": "飞行速度增幅戒指",
+  "item.soulstone.knock_back_resistance_ring": "击退抗性增幅戒指",
+
   "spell.soulstone.warrior/bulwark.name": "坚壁",
   "spell.soulstone.warrior/bulwark.description": "获得一个可以免疫3次攻击的护盾。",
   "spell.soulstone.warrior/mystic_monolith.name": "秘法碑石",
@@ -54,5 +72,48 @@
   "spell.soulstone.con_artist/shadow_stun.name": "暗影眩晕",
   "spell.soulstone.con_artist/shadow_stun.description": "对目标施加眩晕效果。",
   "spell.soulstone.zephyr_s_blessing.name": "和风祝福",
-  "spell.soulstone.zephyr_s_blessing.description": "哎呀，这部分忘写了！:p"
+  "spell.soulstone.zephyr_s_blessing.description": "哎呀，这部分忘写了！:p",
+
+
+  "attribute.name.max_mana": "最大法力值",
+  "attribute.name.mana_regen": "法力值恢复",
+
+
+  "itemGroup.soulstone.general": "灵魂石",
+  "itemGroup.soulstone.trinket": "灵魂饰品",
+  "itemGroup.soulstone.weapon": "深渊武器",
+  "itemGroup.soulstone.armor": "深渊装备",
+
+  "tooltip.treasure_hunter_s_blade": "力量加强",
+  "tooltip.champions_armlet": "力量加强，但速度下降，获得黑暗效果",
+  "tooltip.crimson_authority": "受伤后会获得增强",
+  "tooltip.philosopher_s_stone": "法力加强，治疗系法术加强",
+  "tooltip.warrior_roar": "血量50%前护甲加强，血量50%后攻击加强",
+  "tooltip.mountain_pendant": "受到伤害3次恢复10%血量",
+  "tooltip.immortal_monitor": "血量下降到15%时，血量恢复速度大幅增加，冷却90秒",
+
+
+  "tooltip.health_ring": "小幅增幅生命",
+  "tooltip.mana_ring": "小幅增幅法力",
+  "tooltip.armor_ring": "小幅增幅护甲",
+  "tooltip.luck_ring": "小幅增幅幸运",
+  "tooltip.speed_ring": "小幅增幅速度",
+  "tooltip.attack_speed_ring": "小幅增幅攻击速度",
+  "tooltip.armor_toughness_ring": "小幅增幅护甲韧性",
+  "tooltip.attack_knock_back_ring": "小幅增幅攻击击退",
+  "tooltip.flying_speed_ring": "小幅增幅飞行速度",
+  "tooltip.knock_back_resistance_ring": "小幅增幅击退抗性",
+
+
+  "tooltip.abyssTrinket.slot": "深渊的饰品：",
+  "tooltip.abyssTrinket.temns": "@#!#$@#$&(*",
+  "tooltip.abyssTrinket.worn": "深渊的力量？",
+
+
+  "trinkets.slot.chest.soulslots": "特殊深渊饰品槽",
+  "trinkets.slot.feet.soulslots": "辅助性深渊饰品槽",
+  "trinkets.slot.head.soulslots": "高级深渊饰品槽",
+  "trinkets.slot.legs.soulslots": "攻击性深渊饰品槽",
+  "tooltip.champions": ""
+
 }

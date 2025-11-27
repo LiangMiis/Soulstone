@@ -87,6 +87,7 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     modImplementation "maven.modrinth:better-combat:${project.better_combat}-fabric"
+    modImplementation "curse.maven:attributefix-280510:4911083"
 
 
 }

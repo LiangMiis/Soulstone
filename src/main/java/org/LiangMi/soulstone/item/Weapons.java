@@ -38,15 +38,15 @@ public class Weapons {
     public static final Weapon.Entry lesserAbyssalOrb = Orb(
             "lesser_abyssal_orb",
             Weapon.CustomMaterial.matching(ToolMaterials.IRON,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 10));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 25));
     public static final Weapon.Entry medianAbyssalOrb = Orb(
             "median_abyssal_orb",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 20));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 50));
     public static final Weapon.Entry greaterAbyssalOrb = Orb(
             "greater_abyssal_orb",
             Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 30));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 75));
     private static Weapon.Entry Orb(String name, Weapon.CustomMaterial material) {
         return Orb(null, name, material);
     }
@@ -58,15 +58,15 @@ public class Weapons {
     public static final Weapon.Entry lesserAbyssalDagger = Dagger(
             "lesser_abyssal_dagger",
             Weapon.CustomMaterial.matching(ToolMaterials.IRON,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 10));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 25));
     public static final Weapon.Entry medianAbyssalDagger = Dagger(
             "median_abyssal_dagger",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 20));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 50));
     public static final Weapon.Entry greaterAbyssalDagger = Dagger(
             "greater_abyssal_dagger",
             Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 30));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 75));
     private static Weapon.Entry Dagger(String name, Weapon.CustomMaterial material) {
         return Dagger(null, name, material);
     }
@@ -78,15 +78,15 @@ public class Weapons {
     public static final Weapon.Entry lesserAbyssalGreatsword = Greatsword(
             "lesser_abyssal_graetsword",
             Weapon.CustomMaterial.matching(ToolMaterials.IRON,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 10));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.SOUL.id, 25));
     public static final Weapon.Entry medianAbyssalGreatsword = Greatsword(
             "median_abyssal_graetsword",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 20));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.SOUL.id, 50));
     public static final Weapon.Entry greaterAbyssalGreatsword = Greatsword(
             "greater_abyssal_graetsword",
             Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 30));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.SOUL.id, 75));
     private static Weapon.Entry Greatsword(String name, Weapon.CustomMaterial material) {
         return Greatsword(null, name, material);
     }
@@ -98,15 +98,15 @@ public class Weapons {
     public static final Weapon.Entry lesserAbyssalCruciformStaff = CruciformStaff(
             "lesser_abyssal_cruciform_staff",
             Weapon.CustomMaterial.matching(ToolMaterials.IRON,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 10));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.HEALING.id, 25));
     public static final Weapon.Entry medianAbyssalCruciformStaff = CruciformStaff(
             "median_abyssal_cruciform_staff",
             Weapon.CustomMaterial.matching(ToolMaterials.DIAMOND,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 20));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.HEALING.id, 50));
     public static final Weapon.Entry greaterAbyssalCruciformStaff = CruciformStaff(
             "greater_abyssal_cruciform_staff",
             Weapon.CustomMaterial.matching(ToolMaterials.NETHERITE,()-> Ingredient.ofItems(Items.STICK)))
-            .attribute(ItemConfig.Attribute.bonus(SpellSchools.ARCANE.id, 30));
+            .attribute(ItemConfig.Attribute.bonus(SpellSchools.HEALING.id, 75));
     private static Weapon.Entry CruciformStaff(String name, Weapon.CustomMaterial material) {
         return CruciformStaff(null, name, material);
     }

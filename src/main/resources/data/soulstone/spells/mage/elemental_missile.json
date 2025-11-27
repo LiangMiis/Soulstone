@@ -47,14 +47,9 @@
   "impact": [
     {
       "action": {
-        "apply_to_caster": true,
-        "type": "STATUS_EFFECT",
-        "status_effect": {
-          "effect_id": "soulstone:stealth",
-          "amplifier": 1,
-          "duration": 10,
-          "apply_mode": "SET",
-          "show_particles": false
+        "type": "DAMAGE",
+        "damage": {
+          "spell_power_coefficient": 1
         }
       }
     }

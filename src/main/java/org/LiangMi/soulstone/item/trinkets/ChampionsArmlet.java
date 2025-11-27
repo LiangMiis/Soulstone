@@ -32,29 +32,9 @@ public class ChampionsArmlet extends TrinketBass {
         modifiers.put(EntityAttributes.GENERIC_ATTACK_DAMAGE,new EntityAttributeModifier(uuid,"soulstone:champions_armlet",5,EntityAttributeModifier.Operation.ADDITION));
         return modifiers;
     }
-    // 装备时触发的方法 - 添加状态效果
-    @Override
-    public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
-        // 如果实体已经有该状态效果，则不重复添加
-        if(entity.hasStatusEffect(effect)) return;
-        // 创建无限持续时间、指定等级的状态效果实例
-        // 参数说明：效果类型，持续时间(Integer.MAX_VALUE表示无限)，等级，环境粒子显示，图标显示，在HUD上显示
-        StatusEffectInstance effectInstance = new StatusEffectInstance(effect, Integer.MAX_VALUE, amplifier, false, false, false);
-        entity.addStatusEffect(effectInstance);
-    }
     @Override
     public void tick(ItemStack stack, SlotReference slot, LivingEntity entity) {
-        super.tick(stack, slot, entity); // 调用父类的tick方法
-        // 如果实体有指定的状态效果，则移除它
-        if(!entity.hasStatusEffect(effect)) {
-            StatusEffectInstance effectInstance = new StatusEffectInstance(effect, Integer.MAX_VALUE, amplifier, false, false, false);
+            StatusEffectInstance effectInstance = new StatusEffectInstance(effect, 10, amplifier, false, false, false);
             entity.addStatusEffect(effectInstance);
-        }
-    }
-
-    // 卸下时触发的方法 - 移除状态效果
-    @Override
-    public void onUnequip(ItemStack stack, SlotReference slot, LivingEntity entity) {
-        entity.removeStatusEffect(effect);
     }
 }

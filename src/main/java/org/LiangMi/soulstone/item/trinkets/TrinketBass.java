@@ -47,24 +47,20 @@ public class TrinketBass extends TrinketItem {
     // 添加物品提示信息
     public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
         super.appendTooltip(stack, world, tooltip, context);
-
         // 添加装备槽位提示
         tooltip.add(
-                Text.translatable("tooltip.ringsofascension.slot").formatted(Formatting.GRAY)
-                        .append(Text.translatable("tooltip.ringsofascension.ring").formatted(Formatting.YELLOW)));
-
+                Text.translatable("tooltip.abyssTrinket.slot").formatted(Formatting.GRAY)
+                        .append(Text.translatable("tooltip.abyssTrinket.temns").formatted(Formatting.YELLOW)));
         // 添加空行分隔
         tooltip.add(Text.literal(""));
         // 添加佩戴效果提示
-        tooltip.add(Text.translatable("tooltip.ringsofascension.worn").formatted(Formatting.GRAY));
-
+        tooltip.add(Text.translatable("tooltip.abyssTrinket.worn").formatted(Formatting.GRAY));
         // 如果没有特定提示文本，则直接返回
         if(this.tooltip == null) return;
 
         // 添加特定提示文本
         tooltip.add(Text.translatable(this.tooltip).formatted(Formatting.BLUE));
     }
-
 
 }
 

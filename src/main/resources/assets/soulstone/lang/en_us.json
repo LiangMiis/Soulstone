@@ -22,6 +22,25 @@
   "item.soulstone.greater_abyssal_orb": "Greater Abyssal Orb",
 
 
+  "item.soulstone.treasure_hunter_s_blade": "Treasure Hunter's Blade",
+  "item.soulstone.champions_armlet": "Champions Armlet",
+  "item.soulstone.health_ring": "Health Ring",
+  "item.soulstone.crimson_authority": "Crimson_Authority",
+  "item.soulstone.philosopher_s_stone": "Philosopher's Stone",
+  "item.soulstone.warrior_roar": "Warrior Roar",
+  "item.soulstone.mountain_pendant": "Mountain Pendant",
+  "item.soulstone.immortal_monitor": "Immortal Monitor",
+  "item.soulstone.mana_ring": "Mana Ring",
+  "item.soulstone.armor_ring": "Armor Ring",
+  "item.soulstone.luck_ring": "Luck Ring",
+  "item.soulstone.speed_ring": "Speed ring",
+  "item.soulstone.attack_speed_ring": "Attack Speed Ring",
+  "item.soulstone.armor_toughness_ring": "Armor Toughness Ring",
+  "item.soulstone.attack_knock_back_ring": "Attack KnockBack Ring",
+  "item.soulstone.flying_speed_ring": "Flying Speed Ring",
+  "item.soulstone.knock_back_resistance_ring": "KnockBack Resistance Ring",
+
+
   "spell.soulstone.warrior/bulwark.name": "Bulwark",
   "spell.soulstone.warrior/bulwark.description": "You gain a shield that is immune to attacks 3 times.",
   "spell.soulstone.warrior/mystic_monolith.name": "Mystic Monolith",
@@ -56,8 +75,44 @@
   "spell.soulstone.con_artist/shadow_stun.description": "Applies a stun effect to the target.",
   "spell.soulstone.zephyr_s_blessing.name": "Zephyr's Blessing",
   "spell.soulstone.zephyr_s_blessing.description": "Oops, forgot to write that part! :p",
+
+
+  "attribute.name.max_mana": "",
+  "attribute.name.mana_regen": "",
+
+
   "itemGroup.soulstone.general": "SoulStone",
   "itemGroup.soulstone.trinket": "AbyssTrinket",
   "itemGroup.soulstone.weapon": "AbyssWep",
-  "itemGroup.soulstone.armor": "AbyssArmor"
+  "itemGroup.soulstone.armor": "AbyssArmor",
+
+
+  "tooltip.treasure_hunter_s_blade": "",
+  "tooltip.champions_armlet": "",
+  "tooltip.crimson_authority": "",
+  "tooltip.philosopher_s_stone": "",
+  "tooltip.warrior_roar": "",
+  "tooltip.mountain_pendant": "",
+  "tooltip.immortal_monitor": "",
+
+  "tooltip.health_ring": "",
+  "tooltip.mana_ring": "",
+  "tooltip.armor_ring": "",
+  "tooltip.luck_ring": "",
+  "tooltip.attack_speed_ring": "",
+  "tooltip.armor_toughness_ring": "",
+  "tooltip.attack_knock_back_ring": "",
+  "tooltip.flying_speed_ring": "",
+  "tooltip.knock_back_resistance_ring": "",
+  "tooltip.speed_ring": "",
+
+
+  "tooltip.abyssTrinket.slot": "AbyssTrinket:",
+  "tooltip.abyssTrinket.temns": "",
+  "tooltip.abyssTrinket.worn": "",
+
+  "trinkets.slot.chest.soulslots": "",
+  "trinkets.slot.feet.soulslots": "",
+  "trinkets.slot.head.soulslots": "",
+  "trinkets.slot.legs.soulslots": ""
 }

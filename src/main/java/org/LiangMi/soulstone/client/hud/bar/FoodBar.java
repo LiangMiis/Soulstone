@@ -74,16 +74,15 @@ public class FoodBar {
         text = BarHelper.KeepOneDecimal(Food) + "/" + BarHelper.KeepOneDecimal(maxFood);
         context.drawText(font,text,x+10,y-9,0xa87322,false); // 使用蓝色调表示魔力
 
-        float maxAnchor = 100;
+        float ARMOR = (float) player.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
+        context.drawTexture(armor_full,
+                x, y + 5,
+                0, 0,
+                9, 9,
+                9, 9);
 
-        float ARMORTOUGHNESS = (float) player.getAttributeValue(EntityAttributes.GENERIC_ARMOR);
-                context.drawTexture(armor_full,
-                        x, y + 5,
-                        0, 0,
-                        9, 9,
-                        9, 9); // 韧性图标
+        context.drawText(font, BarHelper.KeepOneDecimal(ARMOR), x + 10, y + 4, 0x87CEEB, false);
 
-            context.drawText(font, BarHelper.KeepOneDecimal(ARMORTOUGHNESS), x + 10, y + 4, 0x87CEEB, false);
 
     }
 

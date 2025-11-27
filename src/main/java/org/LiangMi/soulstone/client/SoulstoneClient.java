@@ -4,12 +4,14 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.effect.CustomModelStatusEffect;
 import net.spell_engine.api.render.CustomModels;
 import org.LiangMi.soulstone.Soulstone;
 import org.LiangMi.soulstone.client.effect.BulwarkRenderer;
 import org.LiangMi.soulstone.client.effect.TemporalShellRenderer;
+import org.LiangMi.soulstone.client.gui.BoxScreen;
 import org.LiangMi.soulstone.client.gui.QuestScreen;
 import org.LiangMi.soulstone.client.input.Keybindings;
 import org.LiangMi.soulstone.effect.Effects;
@@ -35,6 +37,8 @@ public class SoulstoneClient implements ClientModInitializer {
         ));
         CustomModelStatusEffect.register(Effects.BULWARK,new BulwarkRenderer());
         CustomModelStatusEffect.register(Effects.TEMPORALSHELL,new TemporalShellRenderer());
+
+        HandledScreens.register(Soulstone.BOX_SCREEN_HANDLER, BoxScreen::new);
 
 //        Keybindings.initBindings();
 //        Keybindings.register();

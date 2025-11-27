@@ -44,9 +44,6 @@ public class StealthEffect extends StatusEffect {
         // 调用父类方法处理基础移除逻辑
         super.onRemoved(entity, attributes, amplifier);
 
-        // 调试输出（空行）
-        System.out.println();
-
         // 确保只在服务端执行（避免客户端重复执行）
         if (!entity.getWorld().isClient()) {
             // 播放隐身结束音效
