@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "soulstone:health_ring",
+    "soulstone:mana_ring",
+    "soulstone:armor_ring",
+    "soulstone:luck_ring",
+    "soulstone:flying_speed_ring",
+    "soulstone:armor_toughness_ring",
+    "soulstone:knock_back_resistance_ring",
+    "soulstone:speed_ring"
+  ]
+}

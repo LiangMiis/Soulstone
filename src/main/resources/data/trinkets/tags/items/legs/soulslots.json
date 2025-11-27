@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "soulstone:attack_speed_ring",
+    "soulstone:attack_knock_back_ring"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "soulstone:treasure_hunter_s_blade",
+    "soulstone:champions_armlet",
+    "soulstone:crimson_authority",
+    "soulstone:philosopher_s_stone",
+    "soulstone:warrior_roar",
+    "soulstone:mountain_pendant",
+    "soulstone:immortal_monitor"
+  ]
+}
