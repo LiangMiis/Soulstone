@@ -6,6 +6,7 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -21,6 +22,7 @@ import net.tinyconfig.ConfigManager;
 import org.LiangMi.soulstone.block.SoulBlocks;
 import org.LiangMi.soulstone.block.entity.SoulBlockEntityType;
 import org.LiangMi.soulstone.client.gui.BoxScreenHandler;
+import org.LiangMi.soulstone.client.input.PointKeybinds;
 import org.LiangMi.soulstone.command.MoodCommand;
 import org.LiangMi.soulstone.command.QuestCommand;
 import org.LiangMi.soulstone.config.Default;
@@ -33,7 +35,10 @@ import org.LiangMi.soulstone.event.MoodEventHandler;
 import org.LiangMi.soulstone.item.*;
 import org.LiangMi.soulstone.item.armor.Armors;
 import org.LiangMi.soulstone.network.ConfigSync;
+import org.LiangMi.soulstone.network.packet.s2c.PointServerNetworking;
 import org.LiangMi.soulstone.system.MoodAttributeSystem;
+import org.LiangMi.soulstone.system.PointAttributeSystem;
+import org.LiangMi.soulstone.system.PointRewardSystem;
 
 import static org.LiangMi.soulstone.registry.EntityRegistry.BLOOD_EYE_ENTITY_ENTITY_TYPE;
 
@@ -81,6 +86,12 @@ public class Soulstone implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(MoodCommand::register);
         MoodAttributeSystem.register();
         MoodEventHandler.register();
+        PointAttributeSystem.register();
+        PointRewardSystem.register();
+        PointKeybinds.register();
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            PointServerNetworking.registerServerReceivers();
+        });
 
     }
 
