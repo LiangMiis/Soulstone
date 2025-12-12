@@ -4,6 +4,7 @@ import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 
 
 // 魔法值属性注册类 - 负责注册和管理与魔法值相关的实体属性
@@ -32,12 +33,8 @@ public class ManaRegistry {
                     (double) 100000f) // 最大值：100,000%（最高消耗）
             ).setTracked(true)); // 设置为跟踪，同步到客户端
 
-    // 构造函数
-    public ManaRegistry(){
-    }
-
     // 私有注册方法 - 将属性注册到游戏注册表中
     private static EntityAttribute register(String id, EntityAttribute attribute) {
-        return Registry.register(Registries.ATTRIBUTE, id, attribute);
+        return Registry.register(Registries.ATTRIBUTE, new Identifier("soulstone",id), attribute);
     }
 }

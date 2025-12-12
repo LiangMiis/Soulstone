@@ -7,13 +7,20 @@ public class AttributeConfig {
 
     static {
         // 定义所有可加点的属性
-        registerAttribute("health", "最大生命值", 2.0, 0.5, 100, "每点增加1颗心");
+        registerAttribute("health", "最大生命值", 2.0, 1, 100, "每点增加1颗心");
         registerAttribute("attack", "攻击伤害", 1.0, 0.5, 50, "每点增加1点攻击伤害");
         registerAttribute("defense", "防御力", 1.0, 0.5, 50, "每点增加1点护甲值");
         registerAttribute("speed", "移动速度", 0.01, 0.002, 30, "每点增加1%移动速度");
-        registerAttribute("mining_speed", "挖掘速度", 0.1, 0.02, 50, "每点增加10%挖掘速度");
-        registerAttribute("luck", "幸运值", 0.05, 0.01, 20, "每点增加5%幸运值");
-        registerAttribute("experience", "经验加成", 0.1, 0.02, 30, "每点增加10%经验获取");
+        registerAttribute("mana", "以太", 0, 1, 100, "每点增加1点以太");
+        registerAttribute("arcane", "奥秘", 0, 1, 100, "每点增加1点奥秘");
+        registerAttribute("fire", "火焰", 0, 1, 100, "每点增加1点火焰");
+        registerAttribute("frost", "寒冰", 0, 1, 100, "每点增加1点寒冰");
+        registerAttribute("healing", "治愈", 0, 1, 100, "每点增加1点治愈");
+        registerAttribute("lightning", "雷电", 0, 1, 100, "每点增加1点雷电");
+        registerAttribute("soul", "灵魂", 0, 1, 100, "每点增加1点灵魂");
+        registerAttribute("critical_chance","法术暴击概率",0,1,100,"每点增加1点暴击概率");
+        registerAttribute("critical_damage","法术暴击伤害",0,1,100,"每点增加1点暴击伤害");
+        registerAttribute("haste","施法速度",0,1,100,"每点增加1点施法速度");
     }
 
     public static void registerAttribute(String id, String name, double baseValue, double increment, int maxLevel, String description) {
@@ -47,14 +54,6 @@ public class AttributeConfig {
 
         public double calculateValue(int points) {
             return baseValue + (increment * points);
-        }
-
-        public String getDisplayValue(int points) {
-            double value = calculateValue(points);
-            if (id.equals("speed") || id.equals("luck") || id.equals("experience")) {
-                return String.format("%.1f%%", value * 100);
-            }
-            return String.format("%.1f", value);
         }
     }
 }

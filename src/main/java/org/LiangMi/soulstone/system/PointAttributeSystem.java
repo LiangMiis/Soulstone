@@ -7,9 +7,13 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.spell_power.api.SpellPower;
+import net.spell_power.api.SpellPowerMechanics;
+import net.spell_power.api.SpellSchools;
 import org.LiangMi.soulstone.access.PointSystemAccess;
 import org.LiangMi.soulstone.config.AttributeConfig;
 import org.LiangMi.soulstone.data.PlayerPointData;
+import org.LiangMi.soulstone.registry.ManaRegistry;
 
 import java.util.UUID;
 public class PointAttributeSystem {
@@ -19,6 +23,18 @@ public class PointAttributeSystem {
     private static final UUID POINT_ATTACK_UUID = UUID.fromString("07aa15d3-cccd-4b5f-846e-2f8280b069c8");
     private static final UUID POINT_DEFENSE_UUID = UUID.fromString("511d42d8-505c-4cb6-a175-707f55413e1a");
     private static final UUID POINT_SPEED_UUID = UUID.fromString("fc6ddab3-72ec-4d1f-821b-cdad1317018d");
+    private static final UUID POINT_MANA_UUID = UUID.fromString("eaf1340c-8fa4-489f-b8f4-668ddfa417ff");
+    private static final UUID POINT_ARCANE_UUID = UUID.fromString("84c75274-d0c3-4c57-a010-34fdda7893b1");
+    private static final UUID POINT_FIRE_UUID = UUID.fromString("93cb8d93-5718-4b44-83c5-45610c7cf2c0");
+    private static final UUID POINT_FROST_UUID = UUID.fromString("bbf5afbf-8882-4762-8ecf-f6caa3883605");
+    private static final UUID POINT_HEALING_UUID = UUID.fromString("02b20d77-efc5-470d-b51d-7c2379fa1086");
+    private static final UUID POINT_LIGHTNING_UUID = UUID.fromString("352a3c4c-eb93-4cc8-83ff-a5ca3ea4fb1d");
+    private static final UUID POINT_SOUL_UUID = UUID.fromString("3c87b311-8ab9-4d10-b2a4-5aca3cb9edb8");
+    private static final UUID POINT_CRITICAL_CHANCE_UUID = UUID.fromString("93b9285d-73f4-4c84-bf85-f2cfe8654e4b");
+    private static final UUID POINT_CRITICAL_DAMAGE_UUID = UUID.fromString("8c1f3f65-27b9-4b37-ae69-e11a4eef5036");
+    private static final UUID POINT_HASTE_UUID = UUID.fromString("15a07389-bac0-4719-899b-6a3fcd9ba889");
+
+
 
     public static void register() {
         // 玩家切换世界时更新属性
@@ -54,8 +70,16 @@ public class PointAttributeSystem {
         updateAttackAttribute(player, pointData);
         updateDefenseAttribute(player, pointData);
         updateSpeedAttribute(player, pointData);
-        updateMiningSpeed(player, pointData); // 自定义属性需要特殊处理
-        updateLuck(player, pointData); // 自定义属性需要特殊处理
+        updateManaAttribute(player,pointData);
+        updateArcaneAttribute(player,pointData);
+        updateFireAttribute(player,pointData);
+        updateFrostAttribute(player,pointData);
+        updateHealingAttribute(player,pointData);
+        updateLightningAttribute(player,pointData);
+        updateSoulAttribute(player,pointData);
+        updateCriticalChanceAttribute(player,pointData);
+        updateCriticalDamageAttribute(player,pointData);
+        updateHasteAttribute(player,pointData);
 
         System.out.println("玩家属性已更新: " + player.getName().getString());
     }
@@ -142,26 +166,185 @@ public class PointAttributeSystem {
             }
         }
     }
+    private static void updateManaAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(ManaRegistry.MANA);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_MANA_UUID);
 
-    // 自定义属性：挖掘速度（通过修改效率附魔级别实现）
-    private static void updateMiningSpeed(ServerPlayerEntity player, PlayerPointData pointData) {
-        int points = pointData.getAssignedPoints("mining_speed");
-        // 这个属性需要特殊处理，可以通过监听方块破坏事件来实现
-        // 这里只是占位符实现
-        if (points > 0) {
-            double multiplier = AttributeConfig.getAttribute("mining_speed").calculateValue(points);
-            // 实际实现需要在挖掘事件中应用这个倍率
+            int points = pointData.getAssignedPoints("mana");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("mana").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_MANA_UUID,
+                        "Point Mana Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateArcaneAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellSchools.ARCANE.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_ARCANE_UUID);
+
+            int points = pointData.getAssignedPoints("arcane");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("arcane").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_ARCANE_UUID,
+                        "Point Arcane Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateFireAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellSchools.FIRE.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_FIRE_UUID);
+
+            int points = pointData.getAssignedPoints("fire");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("fire").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_FIRE_UUID,
+                        "Point fire Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateFrostAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellSchools.FROST.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_FROST_UUID);
+
+            int points = pointData.getAssignedPoints("frost");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("frost").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_FROST_UUID,
+                        "Point Frost Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateHealingAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellSchools.HEALING.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_HEALING_UUID);
+
+            int points = pointData.getAssignedPoints("healing");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("healing").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_HEALING_UUID,
+                        "Point Healing Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateLightningAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellSchools.LIGHTNING.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_LIGHTNING_UUID);
+
+            int points = pointData.getAssignedPoints("lightning");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("lightning").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_LIGHTNING_UUID,
+                        "Point Lightning Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateSoulAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellSchools.SOUL.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_SOUL_UUID);
+
+            int points = pointData.getAssignedPoints("soul");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("soul").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_SOUL_UUID,
+                        "Point Soul Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateCriticalChanceAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellPowerMechanics.CRITICAL_CHANCE.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_CRITICAL_CHANCE_UUID);
+
+            int points = pointData.getAssignedPoints("critical_chance");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("critical_chance").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_CRITICAL_CHANCE_UUID,
+                        "Point Critical Chance Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateCriticalDamageAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellPowerMechanics.CRITICAL_DAMAGE.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_CRITICAL_DAMAGE_UUID);
+
+            int points = pointData.getAssignedPoints("critical_damage");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("critical_damage").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_CRITICAL_DAMAGE_UUID,
+                        "Point Critical Damage Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
+        }
+    }
+    private static void updateHasteAttribute(ServerPlayerEntity player, PlayerPointData pointData) {
+        EntityAttributeInstance attribute = player.getAttributeInstance(SpellPowerMechanics.HASTE.attribute);
+        if (attribute != null) {
+            attribute.removeModifier(POINT_HASTE_UUID);
+
+            int points = pointData.getAssignedPoints("haste");
+            if (points > 0) {
+                double bonus = AttributeConfig.getAttribute("haste").calculateValue(points);
+
+                attribute.addPersistentModifier(new EntityAttributeModifier(
+                        POINT_HASTE_UUID,
+                        "Point Haste Bonus",
+                        bonus,
+                        EntityAttributeModifier.Operation.ADDITION
+                ));
+            }
         }
     }
 
-    // 自定义属性：幸运值（影响战利品掉落）
-    private static void updateLuck(ServerPlayerEntity player, PlayerPointData pointData) {
-        int points = pointData.getAssignedPoints("luck");
-        // 幸运值需要特殊处理，可以通过监听战利品表生成事件来实现
-        // 这里只是占位符实现
-        if (points > 0) {
-            double bonus = AttributeConfig.getAttribute("luck").calculateValue(points);
-            // 实际实现需要在战利品生成事件中应用这个加成
-        }
-    }
 }

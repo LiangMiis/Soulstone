@@ -2,6 +2,8 @@ package org.LiangMi.soulstone.network.packet.c2s;
 
 
 import io.netty.buffer.Unpooled;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
@@ -14,34 +16,29 @@ public class PointClientNetworking {
     private static final Identifier RESET_POINTS_PACKET = new Identifier(Soulstone.ID, "reset_points");
     private static final Identifier OPEN_SCREEN_PACKET = new Identifier(Soulstone.ID, "open_point_screen");
     private static final Identifier OPEN_SCREEN_REQUEST = new Identifier(Soulstone.ID, "open_screen_request");
+    private static final Identifier POINT_DATA_UPDATE = new Identifier(Soulstone.ID, "point_data_update");
 
     public static void sendAssignPoint(String attribute, int amount) {
-        // 创建 PacketByteBuf 并写入数据
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeString(attribute);
         buf.writeInt(amount);
-
-        // 发送加点请求到服务器
         ClientPlayNetworking.send(ASSIGN_POINT_PACKET, buf);
     }
 
     public static void sendResetPoints() {
-        // 发送重置请求到服务器
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         ClientPlayNetworking.send(RESET_POINTS_PACKET, buf);
     }
 
     public static void sendOpenScreenRequest() {
-        // 发送打开界面请求到服务器
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         ClientPlayNetworking.send(OPEN_SCREEN_REQUEST, buf);
     }
 
     public static void registerClientReceivers() {
-        // 注册从服务器接收数据的包
+        // 接收打开界面请求
         ClientPlayNetworking.registerGlobalReceiver(OPEN_SCREEN_PACKET,
                 (client, handler, buf, responseSender) -> {
-                    // 当服务器要求打开加点界面时
                     client.execute(() -> {
                         if (client.player != null) {
                             client.setScreen(new PointScreen(client.player));
@@ -49,12 +46,13 @@ public class PointClientNetworking {
                     });
                 });
 
-        // 注册接收玩家数据更新的包
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier("soulstone", "point_data_update"),
+        // 接收点数数据更新
+        ClientPlayNetworking.registerGlobalReceiver(POINT_DATA_UPDATE,
                 (client, handler, buf, responseSender) -> {
                     int availablePoints = buf.readInt();
                     int attributeCount = buf.readInt();
-                    java.util.Map<String, Integer> assignedPoints = new java.util.HashMap<>();
+                    int gameLv = buf.readInt();
+                    java.util.HashMap<String, Integer> assignedPoints = new java.util.HashMap<>();
 
                     for (int i = 0; i < attributeCount; i++) {
                         String attribute = buf.readString();
@@ -65,7 +63,7 @@ public class PointClientNetworking {
                     client.execute(() -> {
                         // 更新当前打开的加点界面
                         if (client.currentScreen instanceof PointScreen) {
-                            ((PointScreen) client.currentScreen).updateFromNetwork(availablePoints, assignedPoints);
+                            ((PointScreen) client.currentScreen).updateFromNetwork(availablePoints, assignedPoints,gameLv);
                         }
                     });
                 });
