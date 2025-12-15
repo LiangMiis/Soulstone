@@ -1,12 +1,11 @@
 package org.LiangMi.soulstone.client.screen;
 
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
-import org.LiangMi.soulstone.network.packet.c2s.PointClientNetworking;
+import org.LiangMi.soulstone.network.c2s.PointClientNetworking;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,44 +13,49 @@ import java.util.Map;
 public class PointScreen extends Screen {
     private int getMaxLevel;
     private int availablePoints = 0;
-    private Map<String, Integer> assignedPoints = new HashMap<>();
+    private Map<String, Integer> originalPoints = new HashMap<>(); // 原始点数（从服务器获取）
+    private Map<String, Integer> pendingPoints = new HashMap<>(); // 待分配的加点（本地预览）
+    private Map<String, Integer> currentPoints = new HashMap<>(); // 当前显示的点数（原始 + 待分配）
 
     // 按钮和文本的位置信息
     private Map<String, ButtonInfo> buttonInfos;
-    private ButtonWidget resetButton;
+    private ButtonWidget confirmButton;
     private ButtonWidget closeButton;
 
-    // UI 尺寸 - 增加宽度保持居中
-    private int backgroundWidth = 320; // 从256增加到320
-    private int backgroundHeight = 200;
+    // UI 尺寸 - 采用与技能界面类似的风格
+    private int backgroundWidth = 380;
+    private int backgroundHeight = 260;
     private int left;
     private int top;
 
     // 滚动相关变量
     private int scrollY = 0;
     private int contentHeight = 0;
-    private int visibleHeight = 140; // 可见区域高度
+    private int visibleHeight = 180;
     private boolean isDraggingScrollbar = false;
     private int scrollbarWidth = 6;
-    private int scrollbarLeft;
 
     // 属性配置数组
     private static final String[] ATTRIBUTES = {
-            "health", "attack", "defense", "speed","mana",
-            "arcane","fire","frost","healing","lightning","soul",
-            "critical_chance","critical_damage","haste",
+            "health", "attack", "defense", "mana",
+            "arcane", "fire", "frost", "healing", "lightning", "soul"
     };
 
     private static final String[] ATTRIBUTE_NAMES = {
-            "生命值", "攻击力", "防御力", "移动速度","以太",
-            "奥秘","火焰","寒冰","治愈","雷电","灵魂",
-            "法术暴击概率","法术暴击伤害","法术施法速度"
+            "生命值", "攻击力", "防御力", "以太",
+            "奥秘", "火焰", "寒冰", "治愈", "雷电", "灵魂"
+    };
+
+    private static final String[] ATTRIBUTE_ICONS = {
+            "❤", "⚔", "🛡", "✨",
+            "🔮", "🔥", "❄", "💚", "⚡", "💀"
     };
 
     // 按钮信息类
     private static class ButtonInfo {
         int yPos;
         boolean visible;
+
         ButtonInfo(int yPos) {
             this.yPos = yPos;
             this.visible = true;
@@ -59,14 +63,14 @@ public class PointScreen extends Screen {
     }
 
     public PointScreen(PlayerEntity player) {
-        super(Text.literal("加点系统"));
+        super(Text.literal("属性加点系统"));
         this.buttonInfos = new HashMap<>();
 
         // 初始化默认数据
         initializeDefaultAttributes();
 
         // 计算内容总高度
-        this.contentHeight = ATTRIBUTES.length * 25 + 10;
+        this.contentHeight = ATTRIBUTES.length * 35 + 10;
 
         // 请求服务器发送最新数据
         PointClientNetworking.sendOpenScreenRequest();
@@ -74,15 +78,26 @@ public class PointScreen extends Screen {
 
     private void initializeDefaultAttributes() {
         for (String attr : ATTRIBUTES) {
-            assignedPoints.put(attr, 0);
+            originalPoints.put(attr, 0);
+            pendingPoints.put(attr, 0);
+            currentPoints.put(attr, 0);
         }
     }
 
     // 添加这个方法用于从网络包更新数据
-    public void updateFromNetwork(int availablePoints, Map<String, Integer> assignedPoints,int gameLv) {
+    public void updateFromNetwork(int availablePoints, Map<String, Integer> assignedPoints, int gameLv) {
         this.availablePoints = availablePoints;
-        this.assignedPoints = new HashMap<>(assignedPoints);
         this.getMaxLevel = gameLv;
+
+        // 保存原始点数
+        for (String attr : ATTRIBUTES) {
+            int original = assignedPoints.getOrDefault(attr, 0);
+            originalPoints.put(attr, original);
+            // 重置待分配点数
+            pendingPoints.put(attr, 0);
+            // 更新当前显示点数
+            currentPoints.put(attr, original);
+        }
     }
 
     @Override
@@ -91,7 +106,6 @@ public class PointScreen extends Screen {
 
         this.left = (this.width - this.backgroundWidth) / 2;
         this.top = (this.height - this.backgroundHeight) / 2;
-        this.scrollbarLeft = left + backgroundWidth - scrollbarWidth - 10;
 
         createWidgets();
     }
@@ -101,134 +115,244 @@ public class PointScreen extends Screen {
         this.clearChildren();
         buttonInfos.clear();
 
-        // 重置按钮（固定在底部，不受滚动影响）
-        this.resetButton = ButtonWidget.builder(
-                Text.literal("重置所有点数"),
-                button -> onResetPoints()
-        ).dimensions(left + 50, top + 180, 100, 20).build();
+        int buttonWidth = 100;
+        int buttonSpacing = 20;
+        int totalButtonsWidth = 2 * buttonWidth + buttonSpacing;
+        int buttonStartX = left + (backgroundWidth - totalButtonsWidth) / 2;
 
-        // 关闭按钮（固定在底部，不受滚动影响）
-        this.closeButton = ButtonWidget.builder(
+        // 确认按钮
+        this.confirmButton = new CustomButton(
+                buttonStartX,
+                top + backgroundHeight - 30,
+                buttonWidth,
+                25,
+                Text.literal("确认加点"),
+                (button) -> onConfirmPoints(),
+                this
+        );
+
+        // 关闭按钮
+        this.closeButton = new CustomButton(
+                buttonStartX + buttonWidth + buttonSpacing,
+                top + backgroundHeight - 30,
+                buttonWidth,
+                25,
                 Text.literal("关闭"),
-                button -> this.close()
-        ).dimensions(left + 170, top + 180, 100, 20).build();
+                (button) -> this.close(),
+                this
+        );
 
-        this.addDrawableChild(resetButton);
+        this.addDrawableChild(confirmButton);
         this.addDrawableChild(closeButton);
-
-        // 不在这里创建属性按钮，它们在render中动态渲染
     }
 
     private String getEffectText(String attribute, int points) {
+        return "+" + points;
+    }
+
+    private String getDescription(String attribute) {
         switch (attribute) {
-            case "health": return points + "❤";
-            case "attack": return points + "⚔";
-            case "defense": return points + "🛡";
-            case "speed": return points + "%";
-            default: return "";
+            case "health":
+                return "每点增加2点最大生命值";
+            case "attack":
+                return "每点增加1点基础攻击力";
+            case "defense":
+                return "每点增加1点基础防御力";
+            case "mana":
+                return "每点增加10点最大法力值";
+            case "arcane":
+                return "增强奥秘系法术效果";
+            case "fire":
+                return "增强火焰系法术效果";
+            case "frost":
+                return "增强寒冰系法术效果";
+            case "healing":
+                return "增强治愈系法术效果";
+            case "lightning":
+                return "增强雷电系法术效果";
+            case "soul":
+                return "增强灵魂系法术效果";
+            default:
+                return "增强对应属性效果";
         }
     }
 
-    private void onAssignPoint(String attribute, int amount) {
-        // 发送网络包到服务器处理加点
-        PointClientNetworking.sendAssignPoint(attribute, amount);
+    private void onPreviewPoint(String attribute, int amount) {
+        // 本地预览加点，不消耗实际点数
+        int original = originalPoints.getOrDefault(attribute, 0);
+        int pending = pendingPoints.getOrDefault(attribute, 0);
+        int totalPendingPoints = getTotalPendingPoints();
 
-        // 乐观更新：立即更新本地显示，等待服务器确认
-        int current = assignedPoints.getOrDefault(attribute, 0);
-        int newValue = current + amount;
-
-        if (newValue >= 0 && availablePoints >= amount && amount > 0) {
-            assignedPoints.put(attribute, newValue);
-            availablePoints -= amount;
-        } else if (amount < 0 && current > 0) {
-            assignedPoints.put(attribute, newValue);
-            availablePoints -= amount; // amount 为负，所以减去负数是加
+        if (amount > 0) {
+            // 加点预览
+            if (availablePoints > totalPendingPoints && (original + pending + amount) <= getMaxLevel) {
+                pendingPoints.put(attribute, pending + amount);
+                updateCurrentPoints(attribute);
+            }
+        } else if (amount < 0) {
+            // 减点预览
+            if (pending > 0) {
+                pendingPoints.put(attribute, Math.max(0, pending + amount));
+                updateCurrentPoints(attribute);
+            }
         }
     }
 
-    private void onResetPoints() {
-        // 发送网络包到服务器处理重置
-        PointClientNetworking.sendResetPoints();
-
-        // 乐观更新：立即重置本地显示
-        availablePoints = getTotalPoints();
-        for (String attr : assignedPoints.keySet()) {
-            assignedPoints.put(attr, 0);
-        }
+    private void updateCurrentPoints(String attribute) {
+        int original = originalPoints.getOrDefault(attribute, 0);
+        int pending = pendingPoints.getOrDefault(attribute, 0);
+        currentPoints.put(attribute, original + pending);
     }
 
+    private void onConfirmPoints() {
+        // 确认加点，发送所有待分配的加点
+        int totalPendingPoints = getTotalPendingPoints();
+        if (totalPendingPoints == 0) {
+            // 如果没有待分配的加点，直接返回
+            if (this.client != null && this.client.player != null) {
+                this.client.player.sendMessage(Text.literal("§e没有分配点数可确认！"), false);
+            }
+            return;
+        }
 
-    private int getTotalPoints() {
-        // 获取总点数（已分配 + 可用）
-        return availablePoints + getTotalAssignedPoints();
+        for (String attr : ATTRIBUTES) {
+            int pending = pendingPoints.getOrDefault(attr, 0);
+            if (pending > 0) {
+                // 发送网络包到服务器处理加点
+                PointClientNetworking.sendAssignPoint(attr, pending);
+            }
+        }
+
+        // 清空待分配点数（但保持界面打开）
+        for (String attr : ATTRIBUTES) {
+            pendingPoints.put(attr, 0);
+        }
+
+        // 更新可用点数（本地乐观更新）
+        availablePoints -= totalPendingPoints;
+
+
+        // 不关闭窗口，只刷新界面
+        // 注意：这里不清除组件，但需要强制重绘
+        this.init();
+    }
+
+    private int getTotalPendingPoints() {
+        return pendingPoints.values().stream().mapToInt(Integer::intValue).sum();
     }
 
     private int getTotalAssignedPoints() {
-        return assignedPoints.values().stream().mapToInt(Integer::intValue).sum();
+        return currentPoints.values().stream().mapToInt(Integer::intValue).sum();
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        // 绘制半透明背景
         this.renderBackground(context);
 
-        // 绘制主背景
-        context.fill(left, top, left + backgroundWidth, top + backgroundHeight, 0xFFC6C6C6);
-        context.fill(left + 5, top + 5, left + backgroundWidth - 5, top + backgroundHeight - 5, 0xFF000000);
+        // 绘制GUI主背景（深色半透明）
+        context.fill(left, top, left + backgroundWidth, top + backgroundHeight, 0xCC1A1A1A);
+
+        // 绘制边框
+        drawBorder(context);
 
         // 绘制标题区域
-        context.fill(left + 5, top + 5, left + backgroundWidth - 5, top + 25, 0xFF333333);
+        context.fill(left + 5, top + 5, left + backgroundWidth - 5, top + 35, 0xCC333333);
 
         // 绘制标题 - 居中显示
-        int titleWidth = this.textRenderer.getWidth("加点系统");
+        String titleText = "属性加点系统";
+        int titleWidth = this.textRenderer.getWidth(titleText);
         int titleX = left + (backgroundWidth - titleWidth) / 2;
-        context.drawText(this.textRenderer, Text.literal("加点系统"),
-                titleX, top + 11, 0xFFFFFF, false);
+        context.drawTextWithShadow(this.textRenderer, Text.literal(titleText),
+                titleX, top + 13, 0xFFFFFF);
 
-        // 绘制可用点数 - 调整位置
-        String availableText = "可用点数: " + availablePoints;
+        // 计算已使用的预览点数
+        int usedPreviewPoints = getTotalPendingPoints();
+        int remainingPoints = availablePoints - usedPreviewPoints;
+
+        // 绘制可用点数（包括预览中的点数）
+        String availableText = "§e可用点数: §a" + remainingPoints;
+        if (usedPreviewPoints > 0) {
+            availableText += " §7(预览: +" + usedPreviewPoints + ")";
+        }
         int availableWidth = this.textRenderer.getWidth(availableText);
-        int availableX = left + backgroundWidth - availableWidth - 15;
-        context.drawText(this.textRenderer,
+        context.drawTextWithShadow(this.textRenderer,
                 Text.literal(availableText),
-                availableX, top + 11, 0xFFFFFF, false);
+                left + backgroundWidth - availableWidth - 15, top + 13, 0xFFFFFF);
+
+        // 绘制等级限制
+        String levelText = "§7等级上限: §f" + getMaxLevel + " 级";
+        context.drawTextWithShadow(this.textRenderer,
+                Text.literal(levelText),
+                left + 15, top + 13, 0xAAAAAA);
 
         // 启用剪裁区域，限制内容渲染范围
-        context.enableScissor(left + 5, top + 30, left + backgroundWidth - 5, top + 30 + visibleHeight);
+        context.enableScissor(left + 10, top + 40, left + backgroundWidth - 10, top + 40 + visibleHeight);
 
         // 绘制属性列表背景
-        context.fill(left + 5, top + 30, left + backgroundWidth - 5, top + 30 + visibleHeight, 0xFF222222);
+        context.fill(left + 10, top + 40, left + backgroundWidth - 10, top + 40 + visibleHeight, 0xCC222222);
 
         // 绘制属性行背景（交替颜色）并更新按钮位置信息
-        int startY = top + 30 - scrollY;
+        int startY = top + 40 - scrollY;
         updateButtonPositions(startY);
 
         for (int i = 0; i < ATTRIBUTES.length; i++) {
             String attr = ATTRIBUTES[i];
-            int yPos = startY + i * 25;
-            int currentPoints = assignedPoints.getOrDefault(attr, 0);
+            int yPos = startY + i * 35;
+            int currentPoint = currentPoints.getOrDefault(attr, 0);
+            int pendingPoint = pendingPoints.getOrDefault(attr, 0);
+            boolean atMaxLevel = currentPoint >= getMaxLevel;
+            boolean hasPendingPoints = pendingPoint > 0;
 
             // 只绘制在可见区域内的背景
-            if (yPos + 18 >= top + 30 && yPos <= top + 30 + visibleHeight) {
-                int bgColor = (i % 2 == 0) ? 0x44222222 : 0x44333333;
-                context.fill(left + 5, yPos - 2, left + backgroundWidth - 5, yPos + 18, bgColor);
+            if (yPos + 30 >= top + 40 && yPos <= top + 40 + visibleHeight) {
+                // 绘制条目背景
+                int bgColor = (i % 2 == 0) ? 0xCC2C2C2C : 0xCC3C3C3C;
+                if (atMaxLevel) {
+                    bgColor = 0xCC4A2C2C; // 达到最大等级时红色调
+                } else if (hasPendingPoints) {
+                    bgColor = 0xCC2C4A2C; // 有待分配点数时绿色调
+                }
+                context.fill(left + 10, yPos, left + backgroundWidth - 10, yPos + 30, bgColor);
 
-                // 绘制属性名称和点数 - 调整位置
-                context.drawText(this.textRenderer,
-                        Text.literal(ATTRIBUTE_NAMES[i] + ": " + currentPoints),
-                        left + 20, yPos, 0xFFFFFF, false);
+                // 绘制条目边框
+                int borderColor = hasPendingPoints ? 0xCC88FF88 : 0xCC555555;
+                context.fill(left + 10, yPos, left + backgroundWidth - 10, yPos + 1, borderColor); // 上边框
+                context.fill(left + 10, yPos + 29, left + backgroundWidth - 10, yPos + 30, borderColor); // 下边框
 
-                // 绘制效果文本 - 调整位置
-                String effectText = getEffectText(attr, currentPoints);
-                int effectWidth = this.textRenderer.getWidth(effectText);
-                int effectX = left + backgroundWidth - effectWidth - 35;
-                context.drawText(this.textRenderer,
-                        Text.literal(effectText),
-                        effectX, yPos, 0xAAAAAA, false);
+                // 绘制属性图标
+                context.drawTextWithShadow(this.textRenderer,
+                        Text.literal(ATTRIBUTE_ICONS[i]),
+                        left + 20, yPos + 7, 0xFFFFFF);
+
+                // 绘制属性名称
+                int nameColor = atMaxLevel ? 0xFF888888 : (hasPendingPoints ? 0xFF88FF88 : 0xFFFFFF);
+                context.drawTextWithShadow(this.textRenderer,
+                        Text.literal(ATTRIBUTE_NAMES[i]),
+                        left + 45, yPos + 7, nameColor);
+
+                // 绘制当前点数（包括预览）
+                String pointsText = currentPoint + " / " + getMaxLevel;
+                if (pendingPoint > 0) {
+                    pointsText += " §a(+" + pendingPoint + ")";
+                }
+                int pointsWidth = this.textRenderer.getWidth(pointsText);
+                int pointsX = left + backgroundWidth - pointsWidth - 150; // 向左调整，为按钮留出空间
+                int pointsColor = atMaxLevel ? 0xFFFF5555 : (hasPendingPoints ? 0xFF88FF88 : 0xFFFFFF);
+                context.drawTextWithShadow(this.textRenderer,
+                        Text.literal(pointsText),
+                        pointsX, yPos + 7, pointsColor);
+
+                // 绘制效果描述
+                String desc = getDescription(attr);
+                context.drawTextWithShadow(this.textRenderer,
+                        Text.literal(desc),
+                        left + 45, yPos + 19, 0xAAAAAA);
             }
         }
 
-        // 动态渲染属性按钮（在剪裁区域内）
-        renderAttributeButtons(context, mouseX, mouseY, delta);
+        // 动态渲染加点按钮（在剪裁区域内）
+        renderAddPointButtons(context, mouseX, mouseY, delta);
 
         // 禁用剪裁区域
         context.disableScissor();
@@ -236,72 +360,91 @@ public class PointScreen extends Screen {
         // 绘制滚动条（如果需要）
         drawScrollbar(context, mouseX, mouseY);
 
-        // 渲染固定按钮（在剪裁区域外）
-        resetButton.render(context, mouseX, mouseY, delta);
-        closeButton.render(context, mouseX, mouseY, delta);
+        // 渲染按钮
+        super.render(context, mouseX, mouseY, delta);
 
-        // 绘制滚动提示（如果需要）
-        if (contentHeight > visibleHeight) {
-            String scrollHint = "使用鼠标滚轮滚动";
-            int hintWidth = this.textRenderer.getWidth(scrollHint);
-            int hintX = left + (backgroundWidth - hintWidth) / 2;
-            context.drawText(this.textRenderer,
-                    Text.literal(scrollHint),
-                    hintX, top + 170, 0xAAAAAA, false);
-        }
+        // 绘制底部提示
+        drawBottomTips(context);
+    }
+
+    private void drawBorder(DrawContext context) {
+        int borderColor = 0xCCFFFFFF;
+        // 上边框
+        context.fill(left, top, left + backgroundWidth, top + 1, borderColor);
+        // 下边框
+        context.fill(left, top + backgroundHeight - 1, left + backgroundWidth, top + backgroundHeight, borderColor);
+        // 左边框
+        context.fill(left, top, left + 1, top + backgroundHeight, borderColor);
+        // 右边框
+        context.fill(left + backgroundWidth - 1, top, left + backgroundWidth, top + backgroundHeight, borderColor);
     }
 
     private void updateButtonPositions(int startY) {
         buttonInfos.clear();
         for (int i = 0; i < ATTRIBUTES.length; i++) {
             String attr = ATTRIBUTES[i];
-            int yPos = startY + i * 25;
+            int yPos = startY + i * 35;
             buttonInfos.put(attr, new ButtonInfo(yPos));
         }
     }
 
-    private void renderAttributeButtons(DrawContext context, int mouseX, int mouseY, float delta) {
+    private void renderAddPointButtons(DrawContext context, int mouseX, int mouseY, float delta) {
         for (String attr : buttonInfos.keySet()) {
             ButtonInfo info = buttonInfos.get(attr);
             int yPos = info.yPos;
-            int currentPoints = assignedPoints.getOrDefault(attr, 0);
+            int currentPoint = currentPoints.getOrDefault(attr, 0);
+            int pendingPoint = pendingPoints.getOrDefault(attr, 0);
+            int usedPreviewPoints = getTotalPendingPoints();
 
             // 只在可见区域内渲染按钮
-            if (yPos + 15 >= top + 30 && yPos <= top + 30 + visibleHeight) {
+            if (yPos + 25 >= top + 40 && yPos <= top + 40 + visibleHeight) {
                 // 检查是否达到最大等级
-                boolean atMaxLevel = currentPoints >= getMaxLevel;
-                boolean canAdd = availablePoints > 0 && !atMaxLevel;
-                boolean canRemove = currentPoints > 0;
+                boolean atMaxLevel = currentPoint >= getMaxLevel;
+                boolean canAdd = (availablePoints - usedPreviewPoints) > 0 && !atMaxLevel;
+                boolean canRemove = pendingPoint > 0;
 
-                // 加点按钮 - 调整位置，放在属性名称和效果文本中间
-                int buttonAreaWidth = backgroundWidth - 50; // 减去边距
-                int buttonStartX = left + 120; // 更靠右
-                renderButton(context, buttonStartX, yPos, 20, 15,
-                        Text.literal("+"), canAdd, mouseX, mouseY);
+                // 按钮起始位置
+                int buttonStartX = left + backgroundWidth - 110;
 
-                // 减点按钮 - 调整位置
-                renderButton(context, buttonStartX + 35, yPos, 20, 15,
-                        Text.literal("-"), canRemove, mouseX, mouseY);
+                // 显示加点按钮
+                renderPointButton(context, buttonStartX, yPos + 5, 35, 20,
+                        Text.literal("+"), canAdd, mouseX, mouseY, attr, true);
+
+                // 显示减点按钮（如果有待分配点数）放在加点按钮右边
+                if (canRemove) {
+                    renderPointButton(context, buttonStartX + 40, yPos + 5, 35, 20,
+                            Text.literal("-"), true, mouseX, mouseY, attr, false);
+                }
             }
         }
     }
 
-    private void renderButton(DrawContext context, int x, int y, int width, int height,
-                              Text text, boolean active, int mouseX, int mouseY) {
+    private void renderPointButton(DrawContext context, int x, int y, int width, int height,
+                                   Text text, boolean active, int mouseX, int mouseY,
+                                   String attribute, boolean isAdd) {
         // 绘制按钮背景
-        int bgColor = active ? 0xFF555555 : 0xFF333333;
+        int bgColor = active ? (isAdd ? 0xCC446644 : 0xCC664444) : 0xCC333333; // 绿色或红色或灰色
         if (isMouseOverButton(mouseX, mouseY, x, y, width, height) && active) {
-            bgColor = 0xFF666666;
+            bgColor = isAdd ? 0xCC55AA55 : 0xCCAA5555; // 悬停时更亮的颜色
         }
 
         context.fill(x, y, x + width, y + height, bgColor);
-        context.drawBorder(x, y, width, height, active ? 0xFF888888 : 0xFF444444);
+
+        // 绘制按钮边框
+        int borderColor = active ? (isAdd ? 0xCC88FF88 : 0xCCFF8888) : 0xCC555555;
+        if (isMouseOverButton(mouseX, mouseY, x, y, width, height) && active) {
+            borderColor = 0xCCFFFFFF;
+        }
+        context.fill(x, y, x + width, y + 1, borderColor); // 上边框
+        context.fill(x, y + height - 1, x + width, y + height, borderColor); // 下边框
+        context.fill(x, y, x + 1, y + height, borderColor); // 左边框
+        context.fill(x + width - 1, y, x + width, y + height, borderColor); // 右边框
 
         // 绘制按钮文本
-        int textColor = active ? 0xFFFFFF : 0x888888;
+        int textColor = active ? (isAdd ? 0xFF88FF88 : 0xFFFF8888) : 0xFF888888;
         int textX = x + (width - textRenderer.getWidth(text)) / 2;
         int textY = y + (height - 8) / 2;
-        context.drawText(textRenderer, text, textX, textY, textColor, false);
+        context.drawTextWithShadow(textRenderer, text, textX, textY, textColor);
     }
 
     private boolean isMouseOverButton(int mouseX, int mouseY, int x, int y, int width, int height) {
@@ -314,51 +457,39 @@ public class PointScreen extends Screen {
         }
 
         // 计算滚动条参数
+        int scrollbarLeft = left + backgroundWidth - 15;
         int scrollbarHeight = (int) ((float) visibleHeight / contentHeight * visibleHeight);
-        scrollbarHeight = Math.max(scrollbarHeight, 10); // 最小高度
+        scrollbarHeight = Math.max(scrollbarHeight, 20); // 最小高度
 
-        int scrollbarTop = top + 30 + (int) ((float) scrollY / (contentHeight - visibleHeight) * (visibleHeight - scrollbarHeight));
+        int scrollbarTop = top + 40 + (int) ((float) scrollY / (contentHeight - visibleHeight) * (visibleHeight - scrollbarHeight));
 
         // 滚动条背景
-        context.fill(scrollbarLeft, top + 30, scrollbarLeft + scrollbarWidth, top + 30 + visibleHeight, 0xFF555555);
+        context.fill(scrollbarLeft, top + 40, scrollbarLeft + scrollbarWidth, top + 40 + visibleHeight, 0xCC444444);
 
         // 滚动条滑块
-        int scrollbarColor = isDraggingScrollbar || isMouseOverScrollbar(mouseX, mouseY) ? 0xFF888888 : 0xFF666666;
+        int scrollbarColor = isDraggingScrollbar || isMouseOverScrollbar(mouseX, mouseY) ? 0xCC888888 : 0xCC666666;
         context.fill(scrollbarLeft, scrollbarTop, scrollbarLeft + scrollbarWidth, scrollbarTop + scrollbarHeight, scrollbarColor);
     }
 
     private boolean isMouseOverScrollbar(int mouseX, int mouseY) {
+        int scrollbarLeft = left + backgroundWidth - 15;
         return mouseX >= scrollbarLeft && mouseX <= scrollbarLeft + scrollbarWidth &&
-                mouseY >= top + 30 && mouseY <= top + 30 + visibleHeight;
+                mouseY >= top + 40 && mouseY <= top + 40 + visibleHeight;
+    }
+
+    private void drawBottomTips(DrawContext context) {
+        String tipText = "点击按钮预览加点 | 确认加点生效(不关闭窗口) | ESC关闭";
+        int tipWidth = this.textRenderer.getWidth(tipText);
+        int tipX = left + (backgroundWidth - tipWidth) / 2;
+        context.drawTextWithShadow(this.textRenderer,
+                Text.literal(tipText),
+                tipX, top + backgroundHeight - 55, 0xAAAAAA);
     }
 
     // 检查鼠标是否在界面内
     private boolean isMouseOverScreen(double mouseX, double mouseY) {
         return mouseX >= left && mouseX <= left + backgroundWidth &&
                 mouseY >= top && mouseY <= top + backgroundHeight;
-    }
-
-    // 检查鼠标是否在属性按钮上
-    private boolean isMouseOverAttributeButton(double mouseX, double mouseY) {
-        for (String attr : buttonInfos.keySet()) {
-            ButtonInfo info = buttonInfos.get(attr);
-            int yPos = info.yPos;
-
-            // 只在可见区域内检查按钮
-            if (yPos + 15 >= top + 30 && yPos <= top + 30 + visibleHeight) {
-                int buttonStartX = left + 120;
-                // 加点按钮
-                if (isMouseOverButton((int)mouseX, (int)mouseY, buttonStartX, yPos, 20, 15)) {
-                    return true;
-                }
-
-                // 减点按钮
-                if (isMouseOverButton((int)mouseX, (int)mouseY, buttonStartX + 35, yPos, 20, 15)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -387,43 +518,37 @@ public class PointScreen extends Screen {
             return true;
         }
 
-        // 处理属性按钮点击
-        if (button == 0 && isMouseOverAttributeButton(mouseX, mouseY)) {
+        // 处理加点/减点按钮点击（预览模式）
+        if (button == 0) {
             for (String attr : buttonInfos.keySet()) {
                 ButtonInfo info = buttonInfos.get(attr);
                 int yPos = info.yPos;
-                int currentPoints = assignedPoints.getOrDefault(attr, 0);
 
                 // 只在可见区域内处理按钮点击
-                if (yPos + 15 >= top + 30 && yPos <= top + 30 + visibleHeight) {
-                    int buttonStartX = left + 120;
+                if (yPos + 25 >= top + 40 && yPos <= top + 40 + visibleHeight) {
+                    int buttonStartX = left + backgroundWidth - 110;
+
                     // 加点按钮
-                    if (isMouseOverButton((int)mouseX, (int)mouseY, buttonStartX, yPos, 20, 15)) {
-                        boolean atMaxLevel = currentPoints >= getMaxLevel;
-                        if (availablePoints > 0 && !atMaxLevel) {
-                            onAssignPoint(attr, 1);
+                    if (isMouseOverButton((int) mouseX, (int) mouseY, buttonStartX, yPos + 5, 35, 20)) {
+                        int currentPoint = currentPoints.getOrDefault(attr, 0);
+                        boolean atMaxLevel = currentPoint >= getMaxLevel;
+                        int usedPreviewPoints = getTotalPendingPoints();
+
+                        if (!atMaxLevel && (availablePoints - usedPreviewPoints) > 0) {
+                            onPreviewPoint(attr, 1);
                             return true;
                         }
                     }
 
-                    // 减点按钮
-                    if (isMouseOverButton((int)mouseX, (int)mouseY, buttonStartX + 35, yPos, 20, 15)) {
-                        if (currentPoints > 0) {
-                            onAssignPoint(attr, -1);
+                    // 减点按钮（在加点按钮右边）
+                    if (pendingPoints.getOrDefault(attr, 0) > 0) {
+                        if (isMouseOverButton((int) mouseX, (int) mouseY, buttonStartX + 40, yPos + 5, 35, 20)) {
+                            onPreviewPoint(attr, -1);
                             return true;
                         }
                     }
                 }
             }
-        }
-
-        // 处理固定按钮点击
-        if (resetButton.isMouseOver(mouseX, mouseY) && resetButton.active) {
-            return resetButton.mouseClicked(mouseX, mouseY, button);
-        }
-
-        if (closeButton.isMouseOver(mouseX, mouseY)) {
-            return closeButton.mouseClicked(mouseX, mouseY, button);
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -441,7 +566,7 @@ public class PointScreen extends Screen {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (isDraggingScrollbar) {
             // 拖动滚动条
-            double relativeY = mouseY - (top + 30);
+            double relativeY = mouseY - (top + 40);
             double percentage = relativeY / visibleHeight;
             int newScrollY = (int) (percentage * (contentHeight - visibleHeight));
             newScrollY = Math.max(0, Math.min(contentHeight - visibleHeight, newScrollY));
@@ -460,5 +585,41 @@ public class PointScreen extends Screen {
     @Override
     public boolean shouldPause() {
         return false;
+    }
+
+    // 自定义按钮类，与技能界面风格一致
+    private static class CustomButton extends ButtonWidget {
+        private final PointScreen parent;
+
+        public CustomButton(int x, int y, int width, int height, Text message, PressAction onPress, PointScreen parent) {
+            super(x, y, width, height, message, onPress, DEFAULT_NARRATION_SUPPLIER);
+            this.parent = parent;
+        }
+
+        @Override
+        public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+            // 绘制按钮背景
+            int bgColor = this.active ? 0xCC444444 : 0xCC333333;
+            if (this.isHovered() && this.active) {
+                bgColor = 0xCC555555;
+            }
+            context.fill(getX(), getY(), getX() + width, getY() + height, bgColor);
+
+            // 绘制按钮边框
+            int borderColor = this.active ? 0xCC888888 : 0xCC555555;
+            if (this.isHovered() && this.active) {
+                borderColor = 0xCCFFFFFF;
+            }
+            context.fill(getX(), getY(), getX() + width, getY() + 1, borderColor); // 上边框
+            context.fill(getX(), getY() + height - 1, getX() + width, getY() + height, borderColor); // 下边框
+            context.fill(getX(), getY(), getX() + 1, getY() + height, borderColor); // 左边框
+            context.fill(getX() + width - 1, getY(), getX() + width, getY() + height, borderColor); // 右边框
+
+            // 绘制按钮文本
+            int textColor = this.active ? 0xFFFFFF : 0xAAAAAA;
+            int textX = getX() + (width - parent.textRenderer.getWidth(this.getMessage())) / 2;
+            int textY = getY() + (height - 8) / 2;
+            context.drawTextWithShadow(parent.textRenderer, this.getMessage(), textX, textY, textColor);
+        }
     }
 }

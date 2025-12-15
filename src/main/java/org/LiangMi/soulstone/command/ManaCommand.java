@@ -26,7 +26,7 @@ public class ManaCommand {
                         )
                 )
                 .then(literal("get")
-                        .executes(context -> getMana(context)))
+                        .executes(ManaCommand::getMana))
         );
     }
     private static int addMana(CommandContext<ServerCommandSource> context, float amount){

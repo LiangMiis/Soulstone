@@ -1,0 +1,57 @@
+{
+  "school": "HEALING",
+  "range": 50,
+
+  "cast": {
+    "duration": 1.0,
+    "channel_ticks": 20,
+    "animation": "spell_engine:heal_charge",
+    "sound": {
+      "id": "minecraft:block.enchantment_table.use",
+      "volume": 0.8,
+      "pitch": 1.0
+    },
+    "particles": [
+      {
+        "particle_id": "minecraft:happy_villager",
+        "shape": "SPHERE",
+        "count": 8,
+        "min_speed": 0,
+        "max_speed": 0.1
+      }
+    ]
+  },
+
+  "release": {
+    "target": {
+      "type": "SELF"
+    },
+    "sound": {
+      "id": "minecraft:entity.experience_orb.pickup",
+      "volume": 0.7,
+      "pitch": 1.5
+    }
+  },
+
+  "impact": [
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "apply_to_caster": true,
+        "min_power": 1,
+        "status_effect": {
+          "effect_id": "soulstone:life_imprint",
+          "duration": 6,
+          "amplifier": 0,
+          "apply_mode": "SET",
+          "show_particles": true
+        }
+      }
+    }
+  ],
+
+  "cost": {
+    "exhaust": 0.15,
+    "cooldown_duration": 8.0
+  }
+}

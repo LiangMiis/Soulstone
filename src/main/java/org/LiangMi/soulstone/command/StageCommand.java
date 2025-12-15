@@ -44,24 +44,6 @@ public class StageCommand {
                                 .then(CommandManager.argument("player", EntityArgumentType.players())
                                         .executes(context -> setLevelForPlayers(context, EntityArgumentType.getPlayers(context, "player"), IntegerArgumentType.getInteger(context, "level"))))))
 
-                .then(CommandManager.literal("unlock")
-                        .then(CommandManager.argument("level", IntegerArgumentType.integer())
-                                .suggests((context, builder) -> {
-                                    String[] levelStrings = GameStageManager.getAllLevelStrings();
-                                    for (String levelStr : levelStrings) {
-                                        builder.suggest(levelStr);
-                                    }
-                                    return builder.buildFuture();
-                                })
-                                .executes(context -> unlockLevel(context, context.getSource().getPlayer(), IntegerArgumentType.getInteger(context, "level")))
-                                .then(CommandManager.argument("player", EntityArgumentType.players())
-                                        .executes(context -> unlockLevelForPlayers(context, EntityArgumentType.getPlayers(context, "player"), IntegerArgumentType.getInteger(context, "level"))))))
-
-                .then(CommandManager.literal("unlockall")
-                        .executes(context -> unlockAllLevels(context, context.getSource().getPlayer()))
-                        .then(CommandManager.argument("player", EntityArgumentType.players())
-                                .executes(context -> unlockAllLevelsForPlayers(context, EntityArgumentType.getPlayers(context, "player")))))
-
                 .then(CommandManager.literal("list")
                         .executes(context -> listLevels(context, context.getSource().getPlayer()))
                         .then(CommandManager.argument("player", EntityArgumentType.player())
@@ -153,97 +135,11 @@ public class StageCommand {
         return count;
     }
 
-    private static int unlockLevel(CommandContext<ServerCommandSource> context, ServerPlayerEntity player, int level) throws CommandSyntaxException {
-        if (player == null) {
-            context.getSource().sendError(Text.literal("玩家不存在或不在线").styled(style -> style.withColor(Formatting.RED)));
-            return 0;
-        }
 
 
-        if (!GameStageManager.isValidLevel(level)) {
-            context.getSource().sendError(Text.literal("无效等级: " + level + "，可用等级: 20, 30, 40, 50").styled(style -> style.withColor(Formatting.RED)));
-            return 0;
-        }
 
-        boolean success = GameStageManager.unlockLevel(player, level);
 
-        if (success) {
-            final int finalLevel = level;
-            context.getSource().sendFeedback(() ->
-                    Text.literal("已为玩家 ")
-                            .append(Text.literal(player.getName().getString()).styled(style -> style.withColor(Formatting.GOLD)))
-                            .append(" 解锁等级: Lv." + finalLevel).styled(style -> style.withColor(Formatting.GREEN)), false);
-            return 1;
-        } else {
-            // 可能已经解锁了
-            if (GameStageManager.hasLevelUnlocked(player, level)) {
-                final int finalLevel = level;
-                context.getSource().sendFeedback(() ->
-                        Text.literal("玩家 ")
-                                .append(Text.literal(player.getName().getString()).styled(style -> style.withColor(Formatting.GOLD)))
-                                .append(" 已经解锁了等级: Lv." + finalLevel).styled(style -> style.withColor(Formatting.YELLOW)), false);
-                return 1;
-            } else {
-                context.getSource().sendError(Text.literal("无法解锁等级: Lv." + level).styled(style -> style.withColor(Formatting.RED)));
-                return 0;
-            }
-        }
-    }
 
-    private static int unlockLevelForPlayers(CommandContext<ServerCommandSource> context, Collection<ServerPlayerEntity> players, int level) throws CommandSyntaxException {
-        if (!GameStageManager.isValidLevel(level)) {
-            context.getSource().sendError(Text.literal("无效等级: " + level + "，可用等级: 20, 30, 40, 50").styled(style -> style.withColor(Formatting.RED)));
-            return 0;
-        }
-
-        int count = 0;
-
-        for (ServerPlayerEntity player : players) {
-            boolean success = GameStageManager.unlockLevel(player, level);
-            if (success) {
-                count++;
-            } else if (GameStageManager.hasLevelUnlocked(player, level)) {
-                count++; // 已经解锁的也算成功
-            }
-        }
-
-        final int finalCount = count;
-        final int finalLevel = level;
-        context.getSource().sendFeedback(() ->
-                Text.literal("已为 " + finalCount + " 名玩家解锁等级: Lv." + finalLevel).styled(style -> style.withColor(Formatting.GREEN)), false);
-
-        return count;
-    }
-
-    private static int unlockAllLevels(CommandContext<ServerCommandSource> context, ServerPlayerEntity player) throws CommandSyntaxException {
-        if (player == null) {
-            context.getSource().sendError(Text.literal("玩家不存在或不在线").styled(style -> style.withColor(Formatting.RED)));
-            return 0;
-        }
-
-        GameStageManager.unlockAllLevels(player);
-        context.getSource().sendFeedback(() ->
-                Text.literal("已为玩家 ")
-                        .append(Text.literal(player.getName().getString()).styled(style -> style.withColor(Formatting.GOLD)))
-                        .append(" 解锁所有等级").styled(style -> style.withColor(Formatting.GREEN)), false);
-
-        return 1;
-    }
-
-    private static int unlockAllLevelsForPlayers(CommandContext<ServerCommandSource> context, Collection<ServerPlayerEntity> players) throws CommandSyntaxException {
-        int count = 0;
-
-        for (ServerPlayerEntity player : players) {
-            GameStageManager.unlockAllLevels(player);
-            count++;
-        }
-
-        final int finalCount = count;
-        context.getSource().sendFeedback(() ->
-                Text.literal("已为 " + finalCount + " 名玩家解锁所有等级").styled(style -> style.withColor(Formatting.GREEN)), false);
-
-        return count;
-    }
 
     private static int listLevels(CommandContext<ServerCommandSource> context, ServerPlayerEntity player) throws CommandSyntaxException {
         if (player == null) {
@@ -251,7 +147,6 @@ public class StageCommand {
             return 0;
         }
 
-        Map<Integer, Boolean> unlockedLevels = GameStageManager.getUnlockedLevels(player);
         int currentLevel = GameStageManager.getCurrentLevel(player);
 
         // 发送标题
@@ -262,12 +157,10 @@ public class StageCommand {
 
         // 列出所有等级
         for (int level : GameStageManager.getAllLevels()) {
-            boolean unlocked = unlockedLevels.getOrDefault(level, false);
             boolean isCurrent = level == currentLevel;
 
-            Formatting levelColor = unlocked ? Formatting.GREEN : Formatting.RED;
             MutableText levelText = Text.literal("  " + (isCurrent ? "▶ " : "  "))
-                    .append(Text.literal("Lv." + level).styled(style -> style.withColor(levelColor).withBold(isCurrent)))
+                    .append(Text.literal("Lv." + level).styled(style -> style.withColor(Formatting.GREEN).withBold(isCurrent)))
                     .append(": ")
                     .append(Text.literal(GameStageManager.getLevelName(level)));
 
@@ -275,16 +168,6 @@ public class StageCommand {
                 levelText = levelText.copy().styled(style -> style.withBold(true));
             }
 
-            // 添加点击事件来设置等级（如果已解锁）
-            if (unlocked && !isCurrent) {
-                final int finalLevel = level;
-                Style clickableStyle = Style.EMPTY
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                "/gamestage set " + level + " " + player.getName().getString()))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                Text.literal("点击设置为当前等级")));
-                levelText = levelText.copy().setStyle(clickableStyle);
-            }
 
             MutableText finalLevelText = levelText;
             context.getSource().sendFeedback(() -> finalLevelText, false);
@@ -293,41 +176,6 @@ public class StageCommand {
         return 1;
     }
 
-    private static int addProgress(CommandContext<ServerCommandSource> context, ServerPlayerEntity player, String type, int amount) throws CommandSyntaxException {
-        if (player == null) {
-            context.getSource().sendError(Text.literal("玩家不存在或不在线").styled(style -> style.withColor(Formatting.RED)));
-            return 0;
-        }
-
-        GameStageManager.addPlayerProgress(player, type, amount);
-
-        int newValue = GameStageManager.getPlayerProgress(player, type);
-        final int finalNewValue = newValue;
-        final String finalType = type;
-        context.getSource().sendFeedback(() ->
-                Text.literal("已为玩家 ")
-                        .append(Text.literal(player.getName().getString()).styled(style -> style.withColor(Formatting.GOLD)))
-                        .append(" 增加进度: " + finalType + " +" + amount + " = " + finalNewValue).styled(style -> style.withColor(Formatting.GREEN)), false);
-
-        return 1;
-    }
-
-    private static int getProgress(CommandContext<ServerCommandSource> context, ServerPlayerEntity player, String type) throws CommandSyntaxException {
-        if (player == null) {
-            context.getSource().sendError(Text.literal("玩家不存在或不在线").styled(style -> style.withColor(Formatting.RED)));
-            return 0;
-        }
-
-        int value = GameStageManager.getPlayerProgress(player, type);
-        final int finalValue = value;
-        final String finalType = type;
-        context.getSource().sendFeedback(() ->
-                Text.literal("玩家 ")
-                        .append(Text.literal(player.getName().getString()).styled(style -> style.withColor(Formatting.GOLD)))
-                        .append(" 的进度 " + finalType + ": " + finalValue).styled(style -> style.withColor(Formatting.GREEN)), false);
-
-        return 1;
-    }
 
     private static int resetLevel(CommandContext<ServerCommandSource> context, ServerPlayerEntity player) throws CommandSyntaxException {
         if (player == null) {
@@ -371,12 +219,6 @@ public class StageCommand {
 
         context.getSource().sendFeedback(() ->
                 Text.literal("/gamestage set <等级> [玩家] - 设置等级").styled(style -> style.withColor(Formatting.GREEN)), false);
-
-        context.getSource().sendFeedback(() ->
-                Text.literal("/gamestage unlock <等级> [玩家] - 解锁等级").styled(style -> style.withColor(Formatting.GREEN)), false);
-
-        context.getSource().sendFeedback(() ->
-                Text.literal("/gamestage unlockall [玩家] - 解锁所有等级").styled(style -> style.withColor(Formatting.GREEN)), false);
 
         context.getSource().sendFeedback(() ->
                 Text.literal("/gamestage list [玩家] - 列出所有等级状态").styled(style -> style.withColor(Formatting.GREEN)), false);

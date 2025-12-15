@@ -23,16 +23,13 @@ public class PlayerPointData {
         assignedPoints.put("health", 0);
         assignedPoints.put("attack", 0);
         assignedPoints.put("defense", 0);
-        assignedPoints.put("speed", 0);
+        assignedPoints.put("mana", 0);
         assignedPoints.put("arcane",0);
         assignedPoints.put("fire",0);
         assignedPoints.put("frost",0);
         assignedPoints.put("healing",0);
         assignedPoints.put("lightning",0);
         assignedPoints.put("soul",0);
-        assignedPoints.put("critical_chance",0);
-        assignedPoints.put("critical_damage",0);
-        assignedPoints.put("haste",0);
     }
 
     public int getAvailablePoints() {

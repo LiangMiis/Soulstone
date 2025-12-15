@@ -20,7 +20,7 @@ public class ManaRegistry {
     // 魔法值回复属性 - 定义实体每秒回复的魔法值数量
     public static final EntityAttribute MANAREGEN = register("mana_regen",
             (new ClampedEntityAttribute("attribute.name.mana_regen", // 属性名称翻译键
-                    (double) 0.3f,   // 默认值：每秒回复0.3点魔法值
+                    (double) 0f,   // 默认值：每秒回复0点魔法值
                     (double) 0f,     // 最小值：0点回复（不能为负）
                     (double) 100000f) // 最大值：每秒回复100,000点魔法值
             ).setTracked(true)); // 设置为跟踪，同步到客户端

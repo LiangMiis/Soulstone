@@ -1,8 +1,5 @@
 {
   "spell_ids": [
-    "soulstone:pastor/holy_surge",
-    "soulstone:pastor/echo_of_fate",
-    "soulstone:pastor/sacred_radiance",
-    "soulstone:pastor/temporal_shell"
+    "soulstone:life_imprint"
   ]
 }
