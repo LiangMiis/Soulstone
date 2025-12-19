@@ -17,6 +17,7 @@ import org.LiangMi.soulstone.effect.Effects;
 import org.LiangMi.soulstone.network.ConfigSync;
 import org.LiangMi.soulstone.network.c2s.PointClientNetworking;
 import org.LiangMi.soulstone.network.c2s.SpellClientNetworking;
+import org.LiangMi.soulstone.network.packet.CooldownPacket;
 
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class SoulstoneClient implements ClientModInitializer {
         SpellKeybinds.register();
         EntityModels.register();
         SpellClientNetworking.registerClientReceivers();
+        CooldownPacket.init();
 
 //        Keybindings.initBindings();
 //        Keybindings.register();

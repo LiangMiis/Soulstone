@@ -136,7 +136,6 @@ public class Soulstone implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             PointServerNetworking.registerServerReceivers();
             SpellServerNetworking.initialize();
-            CooldownPacket.init();
         });
 
         // 注册玩家数据保存器事件
